@@ -1,0 +1,783 @@
+openapi: 3.0.3
+info:
+  title: Bildungsplan API
+  version: 0.0.1-SNAPSHOT
+  description: |
+    OpenAPI-Spezifikation, aus dem vorhandenen Spring-Boot-Source-Code abgeleitet.
+
+    Abgedeckte Controller:
+      - EfzController
+      - FachrichtungController
+      - LernortController
+      - ModulController
+      - HandlungskompetenzbereichController
+      - HandlungskompetenzController
+servers:
+  - url: http://localhost:8080
+    description: Lokale Entwicklungsumgebung
+
+tags:
+  - name: EFZ
+  - name: Fachrichtungen
+  - name: Lernorte
+  - name: Module
+  - name: Handlungskompetenzbereiche
+  - name: Handlungskompetenzen
+
+paths:
+  /api/efz:
+    get:
+      tags: [EFZ]
+      summary: Liefert alle EFZ
+      operationId: holeAlleEfz
+      responses:
+        '200':
+          description: Liste aller EFZ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EfzDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/efz/{id}:
+    get:
+      tags: [EFZ]
+      summary: Liefert ein EFZ anhand seiner ID
+      operationId: holeEfzNachId
+      parameters:
+        - $ref: '#/components/parameters/IdPathParam'
+      responses:
+        '200':
+          description: EFZ gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EfzDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/fachrichtungen:
+    get:
+      tags: [Fachrichtungen]
+      summary: Liefert alle Fachrichtungen
+      operationId: holeAlleFachrichtungen
+      responses:
+        '200':
+          description: Liste aller Fachrichtungen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FachrichtungDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/fachrichtungen/efz/{efzId}:
+    get:
+      tags: [Fachrichtungen]
+      summary: Liefert alle Fachrichtungen zu einem EFZ
+      operationId: holeFachrichtungenNachEfzId
+      parameters:
+        - name: efzId
+          in: path
+          required: true
+          description: ID des EFZ
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Liste der Fachrichtungen zum EFZ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FachrichtungDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/fachrichtungen/{id}:
+    get:
+      tags: [Fachrichtungen]
+      summary: Liefert eine Fachrichtung anhand ihrer ID
+      operationId: holeFachrichtungNachId
+      parameters:
+        - $ref: '#/components/parameters/IdPathParam'
+      responses:
+        '200':
+          description: Fachrichtung gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FachrichtungDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/lernorte:
+    get:
+      tags: [Lernorte]
+      summary: Liefert alle Lernorte
+      operationId: holeAlleLernorte
+      responses:
+        '200':
+          description: Liste aller Lernorte
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LernortDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/lernorte/{id}:
+    get:
+      tags: [Lernorte]
+      summary: Liefert einen Lernort anhand seiner ID
+      operationId: holeLernortNachId
+      parameters:
+        - $ref: '#/components/parameters/IdPathParam'
+      responses:
+        '200':
+          description: Lernort gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LernortDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/module:
+    get:
+      tags: [Module]
+      summary: Liefert alle Module
+      operationId: holeAlleModule
+      responses:
+        '200':
+          description: Liste aller Module
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModulDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/module/{id}:
+    get:
+      tags: [Module]
+      summary: Liefert ein Modul anhand seiner ID
+      operationId: holeModulNachId
+      parameters:
+        - $ref: '#/components/parameters/IdPathParam'
+      responses:
+        '200':
+          description: Modul gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModulDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/module/{id}/handlungskompetenzen:
+    get:
+      tags: [Module]
+      summary: Liefert alle Handlungskompetenzen, denen ein Modul zugeordnet ist
+      operationId: holeHandlungskompetenzenNachModulId
+      parameters:
+        - $ref: '#/components/parameters/IdPathParam'
+      responses:
+        '200':
+          description: Liste der Handlungskompetenzen zum Modul
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HandlungskompetenzDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/module/suche:
+    post:
+      tags: [Module]
+      summary: Sucht Module anhand optionaler Filterkriterien
+      operationId: sucheModule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModulSuchkriterienDto'
+      responses:
+        '200':
+          description: Liste der passenden Module
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModulDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/module/lernort/{lernortId}:
+    get:
+      tags: [Module]
+      summary: Liefert alle Module für einen bestimmten Lernort
+      operationId: holeModuleNachLernort
+      parameters:
+        - name: lernortId
+          in: path
+          required: true
+          description: ID des Lernorts
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Liste der Module zum Lernort
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModulDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/module/efz/{efzId}:
+    get:
+      tags: [Module]
+      summary: Liefert alle Module für ein bestimmtes EFZ. Achtung! Dieser Endpoint ist nur für EFZs ohne Fachrichtung.
+      operationId: holeModuleNachEfz
+      parameters:
+        - name: efzId
+          in: path
+          required: true
+          description: ID des EFZ
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Liste der Module zum EFZ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModulDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/module/fachrichtung/{fachrichtungId}:
+    get:
+      tags: [Module]
+      summary: Liefert alle Module für eine bestimmte Fachrichtung.
+      operationId: holeModuleNachFachrichtung
+      parameters:
+        - name: fachrichtungId
+          in: path
+          required: true
+          description: ID der Fachrichtung
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Liste der Module zur Fachrichtung
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModulDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/handlungskompetenzbereiche:
+    get:
+      tags: [Handlungskompetenzbereiche]
+      summary: Liefert alle Handlungskompetenzbereiche
+      operationId: holeAlleHandlungskompetenzbereiche
+      responses:
+        '200':
+          description: Liste aller Handlungskompetenzbereiche
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HandlungskompetenzbereichDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/handlungskompetenzbereiche/{id}:
+    get:
+      tags: [Handlungskompetenzbereiche]
+      summary: Liefert einen Handlungskompetenzbereich anhand seiner ID
+      operationId: holeHandlungskompetenzbereichNachId
+      parameters:
+        - $ref: '#/components/parameters/IdPathParam'
+      responses:
+        '200':
+          description: Handlungskompetenzbereich gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HandlungskompetenzbereichDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/handlungskompetenzbereiche/{id}/handlungskompetenzen:
+    get:
+      tags: [Handlungskompetenzbereiche]
+      summary: Liefert alle Handlungskompetenzen eines Handlungskompetenzbereichs
+      operationId: holeHandlungskompetenzenNachHandlungskompetenzbereichId
+      parameters:
+        - $ref: '#/components/parameters/IdPathParam'
+      responses:
+        '200':
+          description: Liste der Handlungskompetenzen zum Handlungskompetenzbereich
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HandlungskompetenzDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/handlungskompetenzbereiche/efz/{efzId}:
+    get:
+      tags: [Handlungskompetenzbereiche]
+      summary: Liefert alle Handlungskompetenzbereiche für ein bestimmtes EFZ. Achtung! Dieser Endpoint ist nur für EFZs ohne Fachrichtung (sonst /api/handlungskompetenzbereiche/fachrichtung/{fachrichtungId}) aufrufen.
+      operationId: holeHandlungskompetenzbereicheNachEfz
+      parameters:
+        - name: efzId
+          in: path
+          required: true
+          description: ID des EFZ
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Liste der Handlungskompetenzbereiche zum EFZ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HandlungskompetenzbereichDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/handlungskompetenzbereiche/fachrichtung/{fachrichtungId}:
+    get:
+      tags: [Handlungskompetenzbereiche]
+      summary: Liefert alle Handlungskompetenzbereiche für eine bestimmte Fachrichtung. Achtung! Dieser Endpoint liefert alle für die Fachrichtung relevanten Resultate (auch allgemeine, welche nicht direkt von der Fachrichtung referenziert sind, sondern via EFZ (allgemeine Sachen für alle Fachrichtungen).
+      operationId: holeHandlungskompetenzbereicheNachFachrichtung
+      parameters:
+        - name: fachrichtungId
+          in: path
+          required: true
+          description: ID der Fachrichtung
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Liste der Handlungskompetenzbereiche zur Fachrichtung
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HandlungskompetenzbereichDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/handlungskompetenzen:
+    get:
+      tags: [Handlungskompetenzen]
+      summary: Liefert alle Handlungskompetenzen
+      operationId: holeAlleHandlungskompetenzen
+      responses:
+        '200':
+          description: Liste aller Handlungskompetenzen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HandlungskompetenzDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/handlungskompetenzen/{id}:
+    get:
+      tags: [Handlungskompetenzen]
+      summary: Liefert eine Handlungskompetenz anhand ihrer ID
+      operationId: holeHandlungskompetenzNachId
+      parameters:
+        - $ref: '#/components/parameters/IdPathParam'
+      responses:
+        '200':
+          description: Handlungskompetenz gefunden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HandlungskompetenzDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/handlungskompetenzen/{id}/module:
+    get:
+      tags: [Handlungskompetenzen]
+      summary: Liefert alle Module, die einer Handlungskompetenz zugeordnet sind
+      operationId: holeModuleNachHandlungskompetenzId
+      parameters:
+        - $ref: '#/components/parameters/IdPathParam'
+      responses:
+        '200':
+          description: Liste der Module zur Handlungskompetenz
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModulDto'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/handlungskompetenzen/efz/{efzId}:
+    get:
+      tags: [Handlungskompetenzen]
+      summary: Liefert alle Handlungskompetenzen für ein bestimmtes EFZ. Achtung! Dieser Endpoint ist nur für EFZs ohne Fachrichtung (sonst /api/handlungskompetenzen/fachrichtung/{fachrichtungId}) aufrufen.
+      operationId: holeHandlungskompetenzenNachEfz
+      parameters:
+        - name: efzId
+          in: path
+          required: true
+          description: ID des EFZ
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Liste der Handlungskompetenzen zum EFZ
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HandlungskompetenzDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/handlungskompetenzen/fachrichtung/{fachrichtungId}:
+    get:
+      tags: [Handlungskompetenzen]
+      summary: Liefert alle Handlungskompetenzen für eine bestimmte Fachrichtung. Achtung! Dieser Endpoint liefert alle für die Fachrichtung relevanten Resultate (auch allgemeine, welche nicht direkt von der Fachrichtung referenziert sind, sondern via EFZ (allgemeine Sachen für alle Fachrichtungen).
+      operationId: holeHandlungskompetenzenNachFachrichtung
+      parameters:
+        - name: fachrichtungId
+          in: path
+          required: true
+          description: ID der Fachrichtung
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Liste der Handlungskompetenzen zur Fachrichtung
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HandlungskompetenzDto'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  parameters:
+    IdPathParam:
+      name: id
+      in: path
+      required: true
+      description: Eindeutige ID der Ressource
+      schema:
+        type: integer
+        format: int32
+
+  responses:
+    NotFound:
+      description: Ressource wurde nicht gefunden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponseDto'
+          examples:
+            notFound:
+              value:
+                timestamp: '2026-04-07T10:15:30'
+                status: 404
+                error: Not Found
+                message: Ressource nicht gefunden
+                path: /api/example/123
+
+    InternalServerError:
+      description: Unerwarteter Serverfehler
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponseDto'
+          examples:
+            internalError:
+              value:
+                timestamp: '2026-04-07T10:15:30'
+                status: 500
+                error: Internal Server Error
+                message: 'Ein unerwarteter Fehler ist aufgetreten: Beispiel'
+                path: /api/example
+
+  schemas:
+    EfzDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Eindeutige ID des EFZ
+        titel:
+          type: string
+          description: Titel oder Bezeichnung des EFZ
+        beschreibung:
+          type: string
+          description: Beschreibungstext des EFZ
+        fachrichtungen:
+          type: array
+          description: Fachrichtungen des EFZ als Liste von IDs
+          items:
+            type: integer
+            format: int32
+
+    FachrichtungDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Eindeutige ID der Fachrichtung
+        titel:
+          type: string
+          description: Titel oder Bezeichnung der Fachrichtung
+        beschreibung:
+          type: string
+          description: Beschreibungstext der Fachrichtung
+        efzId:
+          type: integer
+          format: int32
+          description: Referenz auf das zugehörige EFZ
+
+    LernortDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Eindeutige ID des Lernorts
+        kennung:
+          type: string
+          description: Kennung des Lernorts, z. B. BET, BFS oder ÜK
+        beschreibung:
+          type: string
+          description: Beschreibungstext des Lernorts
+
+    ModulDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: Eindeutige ID des Moduls
+        kennung:
+          type: string
+          description: Kennung des Moduls, z. B. M123 oder 123
+        beschreibung:
+          type: string
+          description: Beschreibungstext des Moduls
+        lehrjahr:
+          type: integer
+          format: int32
+          description: Lehrjahr, in dem das Modul typischerweise besucht wird
+        pflicht:
+          type: boolean
+          description: Kennzeichnet, ob es sich um ein Pflichtmodul handelt
+        lernortId:
+          type: integer
+          format: int32
+          description: ID des zugehörigen Lernorts
+        efzId:
+          type: integer
+          format: int32
+          description: Referenz auf das zugehörige EFZ
+        fachrichtungen:
+          type: array
+          description: Fachrichtungen des EFZ als Liste von IDs
+          items:
+            type: integer
+            format: int32
+        handlungskompetenzIds:
+          type: array
+          description: Liste der Handlungskompetenz-IDs, denen das Modul zugeordnet ist
+          items:
+            type: integer
+            format: int32
+
+    ModulSuchkriterienDto:
+      type: object
+      description: Alle Felder sind optional und dienen als Filter für die Suche
+      properties:
+        freitext:
+          type: string
+          description: Freitextsuche in Kennung oder Beschreibung (like search case insensitive)
+        beschreibung:
+          type: string
+          description: Freitextsuche, z. B. in Kennung oder Beschreibung (like search case insensitive)
+        kennung:
+          type: string
+          description: Exakte oder teilbasierte Modulkennung
+        lehrjahr:
+          type: integer
+          format: int32
+          description: Lehrjahr als Filter
+        lernortId:
+          type: integer
+          format: int32
+          description: Referenz auf den Lernort als Filter
+        efzId:
+          type: integer
+          format: int32
+          description: EFZ-ID als Filter
+        fachrichtungId:
+          type: integer
+          format: int32
+          description: Fachrichtung-ID als Filter
+        fachrichtungTitel:
+          type: string
+          description: Titel der Fachrichtung als Filter
+        pflicht:
+          type: boolean
+          description: Filter für Pflichtmodule
+
+    HandlungskompetenzDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: ID der Handlungskompetenz
+        handlungskompetenzbereichId:
+          type: integer
+          format: int32
+          description: ID des zugehörigen Handlungskompetenzbereichs
+        handlungskompetenzbereichKennung:
+          type: string
+          description: Kennung des zugehörigen Handlungskompetenzbereichs
+        kennung:
+          type: string
+          description: Kennung der Handlungskompetenz, z. B. a1 oder b2
+        beschreibung:
+          type: string
+          description: Beschreibung der Handlungskompetenz
+        lehrjahr:
+          type: integer
+          format: int32
+          nullable: true
+          description: Lehrjahr, aus den verknüpften Modulen ermittelt; kann null sein
+        modulIds:
+          type: array
+          description: Liste der verknüpften Modul-IDs
+          items:
+            type: integer
+            format: int32
+
+    HandlungskompetenzbereichDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: ID des Handlungskompetenzbereichs
+        efzId:
+          type: integer
+          format: int32
+          description: ID des zugehörigen EFZ
+        fachrichtungId:
+          type: integer
+          format: int32
+          nullable: true
+          description: ID der zugehörigen Fachrichtung, falls vorhanden
+        kennung:
+          type: string
+          description: Kennung des Handlungskompetenzbereichs, z. B. a oder b
+        beschreibung:
+          type: string
+          description: Beschreibung des Handlungskompetenzbereichs
+        handlungskompetenzen:
+          type: array
+          description: Liste der zugehörigen Handlungskompetenz-IDs
+          items:
+            type: integer
+            format: int32
+
+
+    ErrorResponseDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Zeitstempel des Fehlers
+        status:
+          type: integer
+          format: int32
+          description: HTTP-Statuscode
+        error:
+          type: string
+          description: Kurze Fehlerbezeichnung
+        message:
+          type: string
+          description: Detaillierte Fehlermeldung
+        path:
+          type: string
+          description: API-Pfad, bei dem der Fehler aufgetreten ist
