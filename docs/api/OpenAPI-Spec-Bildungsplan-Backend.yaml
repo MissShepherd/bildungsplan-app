@@ -13,7 +13,7 @@ info:
       - HandlungskompetenzbereichController
       - HandlungskompetenzController
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8008
     description: Lokale Entwicklungsumgebung
 
 tags:
