@@ -21,8 +21,10 @@
   justify-content: space-between;
   gap: 16px;
   padding-bottom: 18px;
+  padding-right: 8px;
   border-bottom: 1px solid #d6d9de;
 }
+
 
 .filter-title {
   display: flex;
@@ -53,7 +55,9 @@
   font-family: inherit;
   font-size: 12px;
   cursor: pointer;
-  padding: 2px 0;
+  padding: 2px 6px 2px 0;
+  margin-right: 6px;
+  white-space: nowrap;
 }
 
 .clear-button:hover {
@@ -84,11 +88,13 @@
 .filter-section h3,
 .filter-section h2 {
   margin: 0 0 16px;
+  padding-left: 28px;
   color: #050b14;
   font-size: 18px;
   font-weight: 700;
   line-height: 1.2;
-  text-align: center;
+  text-align: left;
+  letter-spacing: -0.2px;
 }
 
 /* Optionen */
