@@ -117,7 +117,7 @@
 
 .app-shell {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 280px minmax(0, 1fr);
   min-height: calc(100vh - 88px);
   background: #f3efe8;
 }

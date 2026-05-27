@@ -1,7 +1,7 @@
 <aside class="filter-sidebar">
   <div class="filter-header">
     <div class="filter-title">
-      <span class="filter-icon" aria-hidden="true">△</span>
+      <span aria-hidden="true">▽</span>
       <span>Filter</span>
     </div>
 
@@ -16,7 +16,7 @@
   </div>
 
   <section class="filter-section">
-    <h2>EFZ</h2>
+    <h3>EFZ</h3>
 
     @for (efz of efzOptions; track efz.id) {
       <label class="filter-option">
@@ -31,16 +31,18 @@
     }
   </section>
 
-  @if (state.hasSelectedEfz() && state.isLoading()) {
-    <section class="filter-section">
+  <section class="filter-section">
+    <h3>Fachrichtung</h3>
+
+    @if (!state.hasSelectedEfz()) {
+      <p class="filter-hint">
+        Wählen Sie zuerst ein EFZ aus. Falls Fachrichtungen vorhanden sind, muss danach eine Fachrichtung gewählt werden.
+      </p>
+    } @else if (state.isLoading()) {
       <p class="filter-hint">Fachrichtungen werden geladen...</p>
-    </section>
-  }
-
-  @if (state.hasSelectedEfz() && state.fachrichtungenLoaded() && state.hasFachrichtungen()) {
-    <section class="filter-section">
-      <h2>Fachrichtung</h2>
-
+    } @else if (state.fachrichtungen().length === 0 && state.fachrichtungenLoaded()) {
+      <p class="filter-hint">Für dieses EFZ sind keine Fachrichtungen vorhanden.</p>
+    } @else {
       @for (fachrichtung of state.fachrichtungen(); track fachrichtung.id) {
         <label class="filter-option">
           <input
@@ -52,67 +54,51 @@
           <span>{{ fachrichtung.titel }}</span>
         </label>
       }
-    </section>
-  }
+    }
+  </section>
 
-  @if (state.hasSelectedEfz() && state.fachrichtungenLoaded() && !state.hasFachrichtungen()) {
-    <section class="filter-section">
-      <p class="filter-hint">
-        Dieses EFZ hat keine Fachrichtungen. Die weiteren Inhalte sind direkt verfügbar.
-      </p>
-    </section>
-  }
+  <section class="filter-section">
+    <h3>Lernort</h3>
 
-  @if (state.isContextComplete()) {
-    <section class="filter-section">
-      <h2>Lernort</h2>
+    @for (lernort of lernortOptions; track lernort.id) {
+      <label class="filter-option">
+        <input
+          type="checkbox"
+          [checked]="state.selectedLernortIds().includes(lernort.id)"
+          (change)="toggleLernort(lernort.id)"
+        />
+        <span>{{ lernort.label }}</span>
+      </label>
+    }
+  </section>
 
-      @for (lernort of lernortOptions; track lernort.id) {
-        <label class="filter-option">
-          <input
-            type="checkbox"
-            [checked]="state.selectedLernortIds().includes(lernort.id)"
-            (change)="toggleLernort(lernort.id)"
-          />
-          <span>{{ lernort.label }}</span>
-        </label>
-      }
-    </section>
+  <section class="filter-section">
+    <h3>Lehrjahr</h3>
 
-    <section class="filter-section">
-      <h2>Lehrjahr</h2>
+    @for (lehrjahr of lehrjahrOptions; track lehrjahr.id) {
+      <label class="filter-option">
+        <input
+          type="checkbox"
+          [checked]="state.selectedLehrjahre().includes(lehrjahr.id)"
+          (change)="toggleLehrjahr(lehrjahr.id)"
+        />
+        <span>{{ lehrjahr.label }}</span>
+      </label>
+    }
+  </section>
 
-      @for (lehrjahr of lehrjahrOptions; track lehrjahr.id) {
-        <label class="filter-option">
-          <input
-            type="checkbox"
-            [checked]="state.selectedLehrjahre().includes(lehrjahr.id)"
-            (change)="toggleLehrjahr(lehrjahr.id)"
-          />
-          <span>{{ lehrjahr.label }}</span>
-        </label>
-      }
-    </section>
+  <section class="filter-section">
+    <h3>Modultyp</h3>
 
-    <section class="filter-section">
-      <h2>Modultyp</h2>
-
-      @for (modultyp of modultypOptions; track modultyp) {
-        <label class="filter-option">
-          <input
-            type="checkbox"
-            [checked]="state.selectedModultypen().includes(modultyp)"
-            (change)="toggleModultyp(modultyp)"
-          />
-          <span>{{ modultyp }}</span>
-        </label>
-      }
-    </section>
-  } @else {
-    <section class="filter-section">
-      <p class="filter-hint">
-        Wählen Sie zuerst ein EFZ aus. Falls Fachrichtungen vorhanden sind, muss danach eine Fachrichtung gewählt werden.
-      </p>
-    </section>
-  }
+    @for (modultyp of modultypOptions; track modultyp) {
+      <label class="filter-option">
+        <input
+          type="checkbox"
+          [checked]="state.selectedModultypen().includes(modultyp)"
+          (change)="toggleModultyp(modultyp)"
+        />
+        <span>{{ modultyp }}</span>
+      </label>
+    }
+  </section>
 </aside>
