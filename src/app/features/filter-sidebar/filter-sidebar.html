@@ -2,19 +2,19 @@
   <div class="filter-header">
     <div class="filter-title">
       <span class="filter-icon" aria-hidden="true">
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-    <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z" />
-  </svg>
-</span>>
+        <svg
+          width="17"
+          height="17"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z" />
+        </svg>
+      </span>
       <span>Filter</span>
     </div>
 
@@ -31,10 +31,7 @@
     <h3>EFZ</h3>
 
     @for (efz of displayedEfzOptions(); track efz.id) {
-      <label
-        class="filter-option"
-        [class.selected]="state.selectedEfzId() === efz.id"
-      >
+      <label class="filter-option">
         <input
           type="radio"
           name="efz"
@@ -47,99 +44,77 @@
     }
   </section>
 
-  <section class="filter-group">
-    <h3>Fachrichtung</h3>
+  @if (state.selectedEfz()) {
+    <section class="filter-group">
+      <h3>Fachrichtung</h3>
 
-    @if (!state.selectedEfz()) {
-      <p class="filter-hint">Zuerst EFZ auswählen.</p>
-    } @else if (state.fachrichtungen().length === 0 && state.fachrichtungenLoaded()) {
-      <p class="filter-hint">Keine Fachrichtung vorhanden.</p>
-    } @else {
-      @for (fachrichtung of state.fachrichtungen(); track fachrichtung.id) {
-        <label
-          class="filter-option"
-          [class.selected]="state.selectedFachrichtungId() === fachrichtung.id"
-        >
-          <input
-            type="radio"
-            name="fachrichtung"
-            [checked]="state.selectedFachrichtungId() === fachrichtung.id"
-            (change)="selectFachrichtung(fachrichtung)"
-          />
+      @if (!state.fachrichtungenLoaded()) {
+        <p class="filter-hint">Fachrichtungen werden geladen...</p>
+      } @else if (state.fachrichtungen().length === 0) {
+        <p class="filter-hint">Für dieses EFZ sind keine Fachrichtungen vorhanden.</p>
+      } @else {
+        @for (fachrichtung of state.fachrichtungen(); track fachrichtung.id) {
+          <label class="filter-option">
+            <input
+              type="radio"
+              name="fachrichtung"
+              [checked]="state.selectedFachrichtungId() === fachrichtung.id"
+              (change)="selectFachrichtung(fachrichtung)"
+            />
 
-          <span>{{ fachrichtung.titel }}</span>
+            <span>{{ fachrichtung.titel }}</span>
+          </label>
+        }
+      }
+    </section>
+  }
+
+  @if (state.isContextComplete()) {
+    <section class="filter-group">
+      <h3>Lernort</h3>
+
+      @if (state.lernorte().length > 0) {
+        @for (lernort of state.lernorte(); track lernort.id) {
+          <label class="filter-option">
+            <input
+              type="checkbox"
+              [checked]="state.selectedLernortId() === lernort.id"
+              (change)="state.selectLernort(state.selectedLernortId() === lernort.id ? null : lernort)"
+            />
+
+            <span>{{ lernort.beschreibung || lernort.kennung }}</span>
+          </label>
+        }
+      } @else {
+        <p class="filter-hint">Lernorte werden geladen oder es wurden keine Lernorte gefunden.</p>
+      }
+    </section>
+
+    <section class="filter-group">
+      <h3>Lehrjahr</h3>
+
+      @for (lehrjahr of lehrjahrOptions; track lehrjahr.id) {
+        <label class="filter-option">
+          <input type="checkbox" />
+          <span>{{ lehrjahr.label }}</span>
         </label>
       }
-    }
-  </section>
+    </section>
 
-<section class="filter-group">
-  <h3>Lernort</h3>
+    <section class="filter-group">
+      <h3>Modultyp</h3>
 
-  @if (state.lernorte().length > 0) {
-    @for (lernort of state.lernorte(); track lernort.id) {
-      <label
-        class="filter-option"
-        [class.selected]="state.selectedLernortId() === lernort.id"
-      >
-        <input
-          type="checkbox"
-          [checked]="state.selectedLernortId() === lernort.id"
-          (change)="state.selectLernort(state.selectedLernortId() === lernort.id ? null : lernort)"
-        />
+      @for (modultyp of modultypOptions; track modultyp) {
+        <label class="filter-option">
+          <input type="checkbox" />
+          <span>{{ modultyp }}</span>
+        </label>
+      }
+    </section>
 
-        <span>{{ lernort.beschreibung || lernort.kennung }}</span>
-      </label>
-    }
-  } @else {
-    <label class="filter-option disabled">
-      <input type="checkbox" disabled />
-      <span>Betrieb</span>
-    </label>
-
-    <label class="filter-option disabled">
-      <input type="checkbox" disabled />
-      <span>Berufsfachschule</span>
-    </label>
-
-    <label class="filter-option disabled">
-      <input type="checkbox" disabled />
-      <span>Überbetriebliche Kurse</span>
-    </label>
-  }
-</section>
-
-  <section class="filter-group">
-    <h3>Lehrjahr</h3>
-
-    @for (lehrjahr of lehrjahrOptions; track lehrjahr.id) {
-      <label class="filter-option">
-        <input type="checkbox" />
-        <span>{{ lehrjahr.label }}</span>
-      </label>
-    }
-  </section>
-
-  <section class="filter-group">
-    <h3>Modultyp</h3>
-
-    @for (modultyp of modultypOptions; track modultyp) {
-      <label class="filter-option">
-        <input type="checkbox" />
-        <span>{{ modultyp }}</span>
-      </label>
-    }
-  </section>
-
-  <section class="filter-group">
-    <h3>Status</h3>
-
-    @if (state.isContextComplete()) {
+    <section class="filter-group">
+      <h3>Status</h3>
       <p class="status-text ready">Kontext vollständig</p>
-    } @else {
-      <p class="status-text blocked">
-        Bitte zuerst EFZ und falls nötig Fachrichtung wählen.
-      </p>
-    }
-  </section>
+    </section>
+  }
 </aside>

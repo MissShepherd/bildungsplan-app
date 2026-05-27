@@ -115,13 +115,11 @@ export class FilterSidebarComponent implements OnInit {
 
     this.contextService.loadByEfz(efzId).subscribe({
       next: (data) => {
-        this.state.setLernorte(data.lernorte);
-        this.state.setHandlungskompetenzbereiche(
-          data.handlungskompetenzbereiche
-        );
-        this.state.setHandlungskompetenzen(data.handlungskompetenzen);
-        this.state.setModule(data.module);
-        this.state.setLoading(false);
+          this.state.setLernorte(data.lernorte);
+          this.state.setHandlungskompetenzbereiche(data.handlungskompetenzbereiche);
+          this.state.setHandlungskompetenzen(data.handlungskompetenzen);
+          this.state.setModule(data.module);
+          this.state.setLoading(false);
       },
       error: () => {
         this.state.setError(
