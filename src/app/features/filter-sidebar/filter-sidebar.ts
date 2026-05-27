@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 
 import { BildungsplanContextService } from '../../core/services/bildungsplan-context.service';
 import { EfzService } from '../../core/services/efz.service';
@@ -19,6 +19,36 @@ export class FilterSidebarComponent implements OnInit {
   private readonly efzService = inject(EfzService);
   private readonly fachrichtungService = inject(FachrichtungService);
   private readonly contextService = inject(BildungsplanContextService);
+
+  readonly fallbackEfzOptions: Efz[] = [
+    { id: 1, titel: 'Informatiker/in' },
+    { id: 2, titel: 'ICT-Fachfrau/Fachmann' },
+    { id: 3, titel: 'Entwickler/in digitales Business' },
+    { id: 4, titel: 'Mediamatiker/in' },
+  ];
+
+  readonly lehrjahrOptions = [
+    { id: 1, label: '1. Lehrjahr' },
+    { id: 2, label: '2. Lehrjahr' },
+    { id: 3, label: '3. Lehrjahr' },
+    { id: 4, label: '4. Lehrjahr' },
+  ];
+
+  readonly modultypOptions = [
+    'Pflichtmodul',
+    'Wahlpflichtmodul',
+    'Wahlmodul',
+  ];
+
+  readonly displayedEfzOptions = computed(() => {
+    const efzList = this.state.efzList();
+
+    if (efzList.length > 0) {
+      return efzList;
+    }
+
+    return this.fallbackEfzOptions;
+  });
 
   ngOnInit(): void {
     this.loadEfzList();
@@ -49,6 +79,7 @@ export class FilterSidebarComponent implements OnInit {
         this.state.setLoading(false);
       },
       error: () => {
+        this.state.setEfzList(this.fallbackEfzOptions);
         this.state.setError('Die EFZ-Liste konnte nicht geladen werden.');
         this.state.setLoading(false);
       },
@@ -69,6 +100,7 @@ export class FilterSidebarComponent implements OnInit {
         }
       },
       error: () => {
+        this.state.setFachrichtungen([]);
         this.state.setError(
           'Die Fachrichtungen zum ausgewählten EFZ konnten nicht geladen werden.'
         );
@@ -83,6 +115,7 @@ export class FilterSidebarComponent implements OnInit {
 
     this.contextService.loadByEfz(efzId).subscribe({
       next: (data) => {
+        this.state.setLernorte(data.lernorte);
         this.state.setHandlungskompetenzbereiche(
           data.handlungskompetenzbereiche
         );
@@ -106,17 +139,22 @@ export class FilterSidebarComponent implements OnInit {
     this.contextService.loadByFachrichtung(fachrichtungId).subscribe({
       next: (data) => {
         this.state.setLernorte(data.lernorte);
-        this.state.setHandlungskompetenzbereiche(data.handlungskompetenzbereiche);
+        this.state.setHandlungskompetenzbereiche(
+          data.handlungskompetenzbereiche
+        );
         this.state.setHandlungskompetenzen(data.handlungskompetenzen);
         this.state.setModule(data.module);
         this.state.setLoading(false);
       },
-      error: () => {
-        this.state.setError(
-          'Die Bildungsplandaten zur ausgewählten Fachrichtung konnten nicht geladen werden.'
-        );
-        this.state.setLoading(false);
-      },
+error: (error) => {
+  console.error('Fachrichtungen konnten nicht geladen werden:', error);
+
+  this.state.setFachrichtungen([]);
+  this.state.setError(
+    `Die Fachrichtungen zum ausgewählten EFZ konnten nicht geladen werden. Status: ${error.status}`
+  );
+  this.state.setLoading(false);
+},
     });
   }
 }
