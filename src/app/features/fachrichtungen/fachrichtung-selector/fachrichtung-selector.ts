@@ -1,35 +1,29 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 
 import { Fachrichtung } from '../../../models/fachrichtung.model';
 
 @Component({
   selector: 'app-fachrichtung-selector',
-  imports: [],
+  standalone: true,
   templateUrl: './fachrichtung-selector.html',
   styleUrl: './fachrichtung-selector.css',
 })
 export class FachrichtungSelector {
-  @Input({ required: true }) fachrichtungen: Fachrichtung[] = [];
-  @Input() disabled = false;
+  readonly fachrichtungen = input<Fachrichtung[]>([]);
+  readonly disabled = input(false);
 
-  @Output() selectedFachrichtungChange = new EventEmitter<Fachrichtung | null>();
+  readonly fachrichtungSelected = output<Fachrichtung | null>();
+  readonly selectedFachrichtungChange = output<Fachrichtung | null>();
 
   readonly selectedFachrichtungId = signal<number | null>(null);
 
-  onSelectionChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
-
-    if (!value) {
-      this.selectedFachrichtungId.set(null);
-      this.selectedFachrichtungChange.emit(null);
+  selectFachrichtung(fachrichtung: Fachrichtung): void {
+    if (this.disabled()) {
       return;
     }
 
-    const selectedId = Number(value);
-    const selectedFachrichtung =
-      this.fachrichtungen.find((fachrichtung) => fachrichtung.id === selectedId) ?? null;
-
-    this.selectedFachrichtungId.set(selectedFachrichtung?.id ?? null);
-    this.selectedFachrichtungChange.emit(selectedFachrichtung);
+    this.selectedFachrichtungId.set(fachrichtung.id);
+    this.fachrichtungSelected.emit(fachrichtung);
+    this.selectedFachrichtungChange.emit(fachrichtung);
   }
 }

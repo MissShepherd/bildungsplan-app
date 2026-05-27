@@ -1,16 +1,18 @@
-<div class="field">
-  <label for="fachrichtung-select">Fachrichtung auswählen</label>
+@if (fachrichtungen().length > 0) {
+  <section class="fachrichtung-selector">
+    <h2>Fachrichtung wählen</h2>
 
-  <select
-    id="fachrichtung-select"
-    [disabled]="disabled"
-    [value]="selectedFachrichtungId() ?? ''"
-    (change)="onSelectionChange($event)"
-  >
-    <option value="">Bitte Fachrichtung auswählen</option>
-
-    @for (fachrichtung of fachrichtungen; track fachrichtung.id) {
-      <option [value]="fachrichtung.id">{{ fachrichtung.titel }}</option>
-    }
-  </select>
-</div>
+    <div class="fachrichtung-list">
+      @for (fachrichtung of fachrichtungen(); track fachrichtung.id) {
+        <button
+          type="button"
+          class="fachrichtung-button"
+          [class.active]="selectedFachrichtungId() === fachrichtung.id"
+          (click)="selectFachrichtung(fachrichtung)"
+        >
+          {{ fachrichtung.titel }}
+        </button>
+      }
+    </div>
+  </section>
+}

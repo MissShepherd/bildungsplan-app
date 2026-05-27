@@ -14,6 +14,7 @@ export class BildungsplanStateService {
   readonly selectedFachrichtungId = signal<number | null>(null);
 
   readonly fachrichtungen = signal<Fachrichtung[]>([]);
+  readonly fachrichtungenLoaded = signal(false);
 
   readonly selectedLernortIds = signal<number[]>([]);
   readonly selectedLehrjahre = signal<number[]>([]);
@@ -26,6 +27,25 @@ export class BildungsplanStateService {
 
   readonly hasSelectedFachrichtung = computed(
     () => this.selectedFachrichtungId() !== null
+  );
+
+  readonly hasFachrichtungen = computed(
+    () => this.fachrichtungen().length > 0
+  );
+
+  readonly requiresFachrichtung = computed(() =>
+    this.selectedEfzId() !== null &&
+    this.fachrichtungenLoaded() &&
+    this.fachrichtungen().length > 0
+  );
+
+  readonly isContextComplete = computed(() =>
+    this.selectedEfzId() !== null &&
+    this.fachrichtungenLoaded() &&
+    (
+      this.fachrichtungen().length === 0 ||
+      this.selectedFachrichtungId() !== null
+    )
   );
 
   readonly hasActiveFilters = computed(() =>
@@ -42,7 +62,9 @@ export class BildungsplanStateService {
 
     this.selectedFachrichtung.set(null);
     this.selectedFachrichtungId.set(null);
+
     this.fachrichtungen.set([]);
+    this.fachrichtungenLoaded.set(false);
 
     this.selectedLernortIds.set([]);
     this.selectedLehrjahre.set([]);
@@ -60,7 +82,9 @@ export class BildungsplanStateService {
 
     this.selectedFachrichtung.set(null);
     this.selectedFachrichtungId.set(null);
+
     this.fachrichtungen.set([]);
+    this.fachrichtungenLoaded.set(false);
 
     this.selectedLernortIds.set([]);
     this.selectedLehrjahre.set([]);
@@ -74,6 +98,12 @@ export class BildungsplanStateService {
 
   setFachrichtungen(fachrichtungen: Fachrichtung[]): void {
     this.fachrichtungen.set(fachrichtungen);
+    this.fachrichtungenLoaded.set(true);
+  }
+
+  clearFachrichtungen(): void {
+    this.fachrichtungen.set([]);
+    this.fachrichtungenLoaded.set(false);
   }
 
   setLoading(isLoading: boolean): void {
@@ -104,6 +134,8 @@ export class BildungsplanStateService {
     this.selectedFachrichtungId.set(null);
 
     this.fachrichtungen.set([]);
+    this.fachrichtungenLoaded.set(false);
+
     this.selectedLernortIds.set([]);
     this.selectedLehrjahre.set([]);
     this.selectedModultypen.set([]);
@@ -133,4 +165,26 @@ export class BildungsplanStateService {
 
     target.set([...currentValues, value]);
   }
+  
+  readonly hasEfz = computed(() => this.hasSelectedEfz());
+
+readonly errorMessage = computed(() => this.error());
+
+readonly contextLabel = computed(() => {
+  const efz = this.selectedEfz();
+  const fachrichtung = this.selectedFachrichtung();
+
+  if (!efz && !this.selectedEfzId()) {
+    return 'Kein EFZ ausgewählt';
+  }
+
+  const efzLabel = efz?.titel ?? `EFZ ${this.selectedEfzId()}`;
+
+  if (!fachrichtung) {
+    return efzLabel;
+  }
+
+  return `${efzLabel} / ${fachrichtung.titel}`;
+});
 }
+

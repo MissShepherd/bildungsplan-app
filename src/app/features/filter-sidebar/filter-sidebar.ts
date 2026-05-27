@@ -1,5 +1,8 @@
 import { Component, inject } from '@angular/core';
+
 import { BildungsplanStateService } from '../../core/state/bildungsplan-state.service';
+import { FachrichtungService } from '../../core/services/fachrichtung.service';
+import { Fachrichtung } from '../../models/fachrichtung.model';
 
 interface FilterOption {
   id: number;
@@ -15,16 +18,13 @@ interface FilterOption {
 export class FilterSidebarComponent {
   readonly state = inject(BildungsplanStateService);
 
+  private readonly fachrichtungService = inject(FachrichtungService);
+
   readonly efzOptions: FilterOption[] = [
     { id: 1, label: 'Informatikerin/Informatiker' },
     { id: 2, label: 'ICT-Fachfrau/Fachmann' },
     { id: 3, label: 'Entwicklerin digitales Business' },
     { id: 4, label: 'Mediamatikerin / Mediamatiker' },
-  ];
-
-  readonly fachrichtungOptions: FilterOption[] = [
-    { id: 1, label: 'Plattformentwicklung' },
-    { id: 2, label: 'Applikationsentwicklung' },
   ];
 
   readonly lernortOptions: FilterOption[] = [
@@ -48,10 +48,11 @@ export class FilterSidebarComponent {
 
   selectEfz(efzId: number): void {
     this.state.setEfz(efzId);
+    this.loadFachrichtungen(efzId);
   }
 
-  selectFachrichtung(fachrichtungId: number): void {
-    this.state.setFachrichtung(fachrichtungId);
+  selectFachrichtung(fachrichtung: Fachrichtung): void {
+    this.state.setSelectedFachrichtung(fachrichtung);
   }
 
   toggleLernort(lernortId: number): void {
@@ -68,5 +69,22 @@ export class FilterSidebarComponent {
 
   clearFilters(): void {
     this.state.clearFilters();
+  }
+
+  private loadFachrichtungen(efzId: number): void {
+    this.state.setLoading(true);
+    this.state.setError(null);
+
+    this.fachrichtungService.getByEfzId(efzId).subscribe({
+      next: (fachrichtungen) => {
+        this.state.setFachrichtungen(fachrichtungen);
+        this.state.setLoading(false);
+      },
+      error: () => {
+        this.state.clearFachrichtungen();
+        this.state.setError('Die Fachrichtungen konnten nicht geladen werden.');
+        this.state.setLoading(false);
+      },
+    });
   }
 }
