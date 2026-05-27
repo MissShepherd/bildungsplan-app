@@ -4,83 +4,88 @@
 }
 
 .filter-sidebar {
-  width: 280px;
+  width: 320px;
   min-height: calc(100vh - 88px);
-  padding: 26px 26px 24px;
-  background: #f8f9fb;
-  border-right: 1px solid #e3e5e8;
-  color: #151515;
+  padding: 28px 30px;
+  background: #f7f8fa;
+  border-right: 1px solid #d6d9de;
+  color: #111827;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 12px;
+  font-size: 14px;
 }
 
-/* Kopfbereich Filter / clear filter */
+/* Header */
 .filter-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #d9d9d9;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #d6d9de;
 }
 
 .filter-title {
   display: flex;
   align-items: center;
-  gap: 9px;
-  color: #1f1f1f;
-  font-size: 13px;
-  font-weight: 400;
+  gap: 10px;
+  color: #111827;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .filter-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 17px;
-  height: 17px;
-  color: #111111;
-  font-size: 18px;
-  line-height: 1;
+  width: 18px;
+  height: 18px;
+  color: #111827;
+}
+
+.filter-icon svg {
+  display: block;
 }
 
 .clear-button {
   border: 0;
   background: transparent;
-  color: #202020;
-  font-size: 10px;
+  color: #374151;
   font-family: inherit;
-  font-weight: 400;
+  font-size: 12px;
   cursor: pointer;
-  padding: 0;
+  padding: 2px 0;
 }
 
 .clear-button:hover {
+  color: #111827;
   text-decoration: underline;
 }
 
 /* Fehlermeldung */
 .filter-error {
-  margin: 14px 0 0;
-  padding: 9px 10px;
+  margin: 16px 0 0;
+  padding: 12px 13px;
   border: 1px solid #f0a6a6;
-  border-radius: 5px;
+  border-radius: 7px;
   background: #fff5f5;
-  color: #8a1111;
-  font-size: 11px;
-  line-height: 1.35;
+  color: #991b1b;
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 /* Gruppen */
-.filter-group {
-  padding: 16px 0 17px;
-  border-bottom: 1px solid #d9d9d9;
+.filter-group,
+.filter-section {
+  padding: 22px 0;
+  border-bottom: 1px solid #d6d9de;
 }
 
-.filter-group h3 {
-  margin: 0 0 12px;
-  color: #111111;
-  font-size: 13px;
+.filter-group h3,
+.filter-section h3,
+.filter-section h2 {
+  margin: 0 0 16px;
+  color: #050b14;
+  font-size: 18px;
   font-weight: 700;
   line-height: 1.2;
   text-align: center;
@@ -89,75 +94,89 @@
 /* Optionen */
 .filter-option {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 21px;
-  padding: 2px 0;
-  color: #202020;
-  font-size: 9px;
-  line-height: 1.15;
+  align-items: flex-start;
+  gap: 11px;
+  width: 100%;
+  min-height: 34px;
+  padding: 7px 9px;
+  margin: 3px -9px;
+  border-radius: 8px;
+  color: #111827;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.35;
   cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+
+.filter-option:hover {
+  background: #eef1f5;
 }
 
 .filter-option input {
-  width: 14px;
-  height: 14px;
+  width: 17px;
+  height: 17px;
   margin: 0;
-  flex: 0 0 14px;
-  accent-color: #111111;
+  margin-top: 1px;
+  flex: 0 0 17px;
+  accent-color: #111827;
   cursor: pointer;
 }
 
 .filter-option span {
   display: block;
-  max-width: 185px;
+  max-width: 230px;
   overflow-wrap: anywhere;
 }
 
-.filter-option:hover span {
-  text-decoration: underline;
+.filter-option:has(input:checked) {
+  background: #e7f7ee;
+  color: #07140d;
 }
 
-.filter-option.selected span {
-  font-weight: 600;
+.filter-option:has(input:checked) span {
+  font-weight: 700;
+}
+
+/* Deaktivierte Optionen */
+.filter-option.disabled,
+.filter-option:has(input:disabled) {
+  color: #6b7280;
+  cursor: default;
+}
+
+.filter-option.disabled:hover,
+.filter-option:has(input:disabled):hover {
+  background: transparent;
+}
+
+.filter-option.disabled input,
+.filter-option input:disabled {
+  cursor: default;
 }
 
 /* Hinweise */
 .filter-hint {
   margin: 0;
-  color: #2b2b2b;
-  font-size: 11px;
-  line-height: 1.35;
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 /* Status */
 .status-text {
   margin: 0;
-  color: #2b2b2b;
-  font-size: 11px;
-  line-height: 1.35;
-  text-align: left;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 .status-text.ready {
-  color: #14532d;
-  font-weight: 600;
+  color: #166534;
+  font-weight: 700;
 }
 
 .status-text.blocked {
-  color: #2b2b2b;
-}
-
-/* Deaktivierte Optionen */
-.filter-option.disabled {
-  color: #555555;
-  cursor: default;
-}
-
-.filter-option.disabled input {
-  cursor: default;
-}
-
-.filter-option.disabled:hover span {
-  text-decoration: none;
+  color: #374151;
 }

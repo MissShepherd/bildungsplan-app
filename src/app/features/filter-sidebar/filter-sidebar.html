@@ -1,7 +1,20 @@
 <aside class="filter-sidebar">
   <div class="filter-header">
     <div class="filter-title">
-      <span class="filter-icon" aria-hidden="true">⌁</span>
+      <span class="filter-icon" aria-hidden="true">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+    <path d="M3 5h18l-7 8v5l-4 2v-7L3 5z" />
+  </svg>
+</span>>
       <span>Filter</span>
     </div>
 
@@ -60,42 +73,41 @@
     }
   </section>
 
-  <section class="filter-group">
-    <h3>Lernort</h3>
+<section class="filter-group">
+  <h3>Lernort</h3>
 
-    @if (state.visibleLernorte().length > 0) {
-      @for (lernort of state.visibleLernorte(); track lernort.id) {
-        <label
-          class="filter-option"
-          [class.selected]="state.selectedLernortId() === lernort.id"
-        >
-          <input
-            type="radio"
-            name="lernort"
-            [checked]="state.selectedLernortId() === lernort.id"
-            (change)="state.selectLernort(lernort)"
-          />
+  @if (state.lernorte().length > 0) {
+    @for (lernort of state.lernorte(); track lernort.id) {
+      <label
+        class="filter-option"
+        [class.selected]="state.selectedLernortId() === lernort.id"
+      >
+        <input
+          type="checkbox"
+          [checked]="state.selectedLernortId() === lernort.id"
+          (change)="state.selectLernort(state.selectedLernortId() === lernort.id ? null : lernort)"
+        />
 
-          <span>{{ lernort.beschreibung || lernort.kennung }}</span>
-        </label>
-      }
-    } @else {
-      <label class="filter-option disabled">
-        <input type="checkbox" disabled />
-        <span>Betrieb</span>
-      </label>
-
-      <label class="filter-option disabled">
-        <input type="checkbox" disabled />
-        <span>Berufsfachschule</span>
-      </label>
-
-      <label class="filter-option disabled">
-        <input type="checkbox" disabled />
-        <span>Überbetriebliche Kurse</span>
+        <span>{{ lernort.beschreibung || lernort.kennung }}</span>
       </label>
     }
-  </section>
+  } @else {
+    <label class="filter-option disabled">
+      <input type="checkbox" disabled />
+      <span>Betrieb</span>
+    </label>
+
+    <label class="filter-option disabled">
+      <input type="checkbox" disabled />
+      <span>Berufsfachschule</span>
+    </label>
+
+    <label class="filter-option disabled">
+      <input type="checkbox" disabled />
+      <span>Überbetriebliche Kurse</span>
+    </label>
+  }
+</section>
 
   <section class="filter-group">
     <h3>Lehrjahr</h3>
