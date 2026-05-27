@@ -1,57 +1,65 @@
-.app-shell {
+:host {
+  display: block;
   min-height: 100vh;
-  background: #f5f7fa;
-  color: #1f2937;
-  font-family: Arial, sans-serif;
+  background: #f5f6f8;
+  color: #1f2933;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .app-header {
+  height: 56px;
+  padding: 0 24px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 2rem;
-  padding: 1.5rem 2rem;
-  background: #ffffff;
-  border-bottom: 1px solid #d9dee7;
+  gap: 32px;
+  background: #171717;
+  color: #ffffff;
+  border-bottom: 1px solid #2a2a2a;
 }
 
-.app-header h1 {
-  margin: 0;
-  font-size: 1.8rem;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-.app-header p {
-  margin: 0.25rem 0 0;
-  color: #5f6b7a;
+.brand-icon {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
 }
 
 .main-nav {
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
 }
 
-.main-nav a {
-  color: #1f2937;
+.nav-link {
+  color: #d1d5db;
   text-decoration: none;
-  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 6px;
 }
 
-.main-nav a:hover {
-  text-decoration: underline;
+.nav-link.active {
+  background: #b8f7cf;
+  color: #111827;
+  font-weight: 700;
+}
+
+.nav-link.disabled {
+  color: #7b7b7b;
+  cursor: not-allowed;
 }
 
 .app-main {
-  padding: 2rem;
-}
-
-.context-card {
-  max-width: 900px;
-  padding: 1.5rem;
-  background: #ffffff;
-  border: 1px solid #d9dee7;
-  border-radius: 12px;
-}
-
-.context-card h2 {
-  margin-top: 0;
+  min-height: calc(100vh - 56px);
 }

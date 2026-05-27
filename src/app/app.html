@@ -1,23 +1,18 @@
-<div class="app-shell">
-  <header class="app-header">
-    <div>
-      <h1>Bildungsplan</h1>
-      <p>Strukturierte Suche und Darstellung von EFZ-Bildungsplandaten</p>
-    </div>
+<header class="app-header">
+  <div class="brand">
+    <div class="brand-icon">▦</div>
+    <span>Bildungsplan-App</span>
+  </div>
 
-    <nav class="main-nav" aria-label="Hauptnavigation">
-      <a routerLink="/">Start</a>
-      <a routerLink="/suche">Suche</a>
-      <a routerLink="/details">Details</a>
-    </nav>
-  </header>
+  <nav class="main-nav" aria-label="Hauptnavigation">
+    <a class="nav-link active" routerLink="/">Startseite</a>
+    <span class="nav-link disabled">Handlungskompetenzbereiche</span>
+    <span class="nav-link disabled">Handlungskompetenzen</span>
+    <span class="nav-link disabled">Module</span>
+    <span class="nav-link disabled">Suche</span>
+  </nav>
+</header>
 
-  <main class="app-main">
-    <section class="context-card">
-      <h2>Kontextauswahl</h2>
-      <p>Bitte zuerst ein EFZ auswählen. Danach werden die passenden Inhalte geladen.</p>
-    </section>
-
-    <router-outlet />
-  </main>
-</div>
+<main class="app-main">
+  <router-outlet />
+</main>

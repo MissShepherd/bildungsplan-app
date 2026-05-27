@@ -1,1 +1,18 @@
-<p>efz-selector works!</p>
+<div class="field">
+  <label for="efz-select">EFZ auswählen</label>
+
+  @if (isLoading()) {
+    <p class="hint">EFZ werden geladen...</p>
+  } @else if (errorMessage()) {
+    <p class="error">{{ errorMessage() }}</p>
+    <button type="button" class="secondary-button" (click)="loadEfz()">Erneut laden</button>
+  } @else {
+    <select id="efz-select" [value]="selectedEfzId() ?? ''" (change)="onSelectionChange($event)">
+      <option value="">Bitte EFZ auswählen</option>
+
+      @for (efz of efzList(); track efz.id) {
+        <option [value]="efz.id">{{ efz.titel }}</option>
+      }
+    </select>
+  }
+</div>
