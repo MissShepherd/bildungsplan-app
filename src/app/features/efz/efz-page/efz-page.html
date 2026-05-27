@@ -1,1 +1,117 @@
-<p>efz-page works!</p>
+<section class="page">
+  <div class="hero">
+    <div>
+      <p class="eyebrow">Startseite</p>
+      <h1>Bildungsplan strukturiert durchsuchen</h1>
+      <p class="lead">
+        Wählen Sie zuerst ein EFZ aus. Falls für das EFZ Fachrichtungen vorhanden sind,
+        muss zusätzlich eine Fachrichtung gewählt werden. Erst danach stehen die
+        kontextabhängigen Inhalte zur Verfügung.
+      </p>
+    </div>
+
+    <div class="context-box">
+      <span class="context-label">Aktueller Kontext</span>
+      <strong>{{ state.contextLabel() }}</strong>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <h2>Kontext wählen</h2>
+
+      <app-efz-selector (selectedEfzChange)="onEfzSelected($event)" />
+
+      @if (state.isLoading()) {
+        <p class="hint">Fachrichtungen werden geprüft...</p>
+      }
+
+      @if (state.errorMessage()) {
+        <p class="error">{{ state.errorMessage() }}</p>
+      }
+
+      @if (state.hasEfz() && state.hasFachrichtungen()) {
+        <app-fachrichtung-selector
+          [fachrichtungen]="state.fachrichtungen()"
+          [disabled]="state.isLoading()"
+          (selectedFachrichtungChange)="onFachrichtungSelected($event)"
+        />
+      }
+
+      @if (state.hasEfz() && !state.hasFachrichtungen() && !state.isLoading()) {
+        <p class="success">
+          Für dieses EFZ wurden keine Fachrichtungen gefunden. Der Kontext ist mit der
+          EFZ-Auswahl vollständig.
+        </p>
+      }
+    </aside>
+
+    <section class="content">
+      <div class="status-card" [class.complete]="state.isContextComplete()">
+        @if (state.isContextComplete()) {
+          <h2>Kontext vollständig</h2>
+          <p>
+            Die weiteren Bereiche können nun im gewählten Kontext geladen und angezeigt
+            werden.
+          </p>
+        } @else {
+          <h2>Kontext noch nicht vollständig</h2>
+          <p>
+            Bitte zuerst ein EFZ auswählen. Falls Fachrichtungen vorhanden sind, muss
+            anschliessend eine Fachrichtung gewählt werden.
+          </p>
+        }
+      </div>
+
+      <div class="cards">
+        <article class="navigation-card" [class.disabled]="!state.isContextComplete()">
+          <span class="tag">HKB</span>
+          <h3>Handlungskompetenzbereiche</h3>
+          <p>
+            Zeigt die Handlungskompetenzbereiche passend zum gewählten EFZ- oder
+            Fachrichtungskontext.
+          </p>
+          <button type="button" [disabled]="!state.isContextComplete()">
+            Öffnen
+          </button>
+        </article>
+
+        <article class="navigation-card" [class.disabled]="!state.isContextComplete()">
+          <span class="tag">HK</span>
+          <h3>Handlungskompetenzen</h3>
+          <p>
+            Listet die Handlungskompetenzen und ermöglicht später den Wechsel in die
+            Detailansicht.
+          </p>
+          <button type="button" [disabled]="!state.isContextComplete()">
+            Öffnen
+          </button>
+        </article>
+
+        <article class="navigation-card" [class.disabled]="!state.isContextComplete()">
+          <span class="tag">Module</span>
+          <h3>Module</h3>
+          <p>
+            Stellt Module im aktuellen Kontext dar und bereitet die spätere Navigation
+            zu verknüpften Objekten vor.
+          </p>
+          <button type="button" [disabled]="!state.isContextComplete()">
+            Öffnen
+          </button>
+        </article>
+
+        <article class="navigation-card" [class.disabled]="!state.isContextComplete()">
+          <span class="tag">Suche</span>
+          <h3>Suche</h3>
+          <p>
+            Die Suche wird erst aktiviert, wenn der fachliche Kontext eindeutig bestimmt
+            ist.
+          </p>
+          <button type="button" [disabled]="!state.isContextComplete()">
+            Öffnen
+          </button>
+        </article>
+      </div>
+    </section>
+  </div>
+</section>

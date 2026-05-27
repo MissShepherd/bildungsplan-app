@@ -1,1 +1,16 @@
-<p>fachrichtung-selector works!</p>
+<div class="field">
+  <label for="fachrichtung-select">Fachrichtung auswählen</label>
+
+  <select
+    id="fachrichtung-select"
+    [disabled]="disabled"
+    [value]="selectedFachrichtungId() ?? ''"
+    (change)="onSelectionChange($event)"
+  >
+    <option value="">Bitte Fachrichtung auswählen</option>
+
+    @for (fachrichtung of fachrichtungen; track fachrichtung.id) {
+      <option [value]="fachrichtung.id">{{ fachrichtung.titel }}</option>
+    }
+  </select>
+</div>
