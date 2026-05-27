@@ -1,1 +1,95 @@
-<p>filter-sidebar works!</p>
+<aside class="filter-sidebar">
+  <div class="filter-header">
+    <div class="filter-title">
+      <span class="filter-icon" aria-hidden="true">▽</span>
+      <span>Filter</span>
+    </div>
+
+    <button
+      type="button"
+      class="clear-button"
+      [disabled]="!state.hasActiveFilters()"
+      (click)="clearFilters()"
+    >
+      clear filter
+    </button>
+  </div>
+
+  <section class="filter-section">
+    <h2>EFZ</h2>
+
+    @for (efz of efzOptions; track efz.id) {
+      <label class="filter-option">
+        <input
+          type="radio"
+          name="efz"
+          [checked]="state.selectedEfzId() === efz.id"
+          (change)="selectEfz(efz.id)"
+        />
+        <span>{{ efz.label }}</span>
+      </label>
+    }
+  </section>
+
+  <section class="filter-section">
+    <h2>Fachrichtung</h2>
+
+    @for (fachrichtung of fachrichtungOptions; track fachrichtung.id) {
+      <label class="filter-option" [class.disabled]="!state.hasSelectedEfz()">
+        <input
+          type="radio"
+          name="fachrichtung"
+          [disabled]="!state.hasSelectedEfz()"
+          [checked]="state.selectedFachrichtungId() === fachrichtung.id"
+          (change)="selectFachrichtung(fachrichtung.id)"
+        />
+        <span>{{ fachrichtung.label }}</span>
+      </label>
+    }
+  </section>
+
+  <section class="filter-section">
+    <h2>Lernort</h2>
+
+    @for (lernort of lernortOptions; track lernort.id) {
+      <label class="filter-option">
+        <input
+          type="checkbox"
+          [checked]="state.selectedLernortIds().includes(lernort.id)"
+          (change)="toggleLernort(lernort.id)"
+        />
+        <span>{{ lernort.label }}</span>
+      </label>
+    }
+  </section>
+
+  <section class="filter-section">
+    <h2>Lehrjahr</h2>
+
+    @for (lehrjahr of lehrjahrOptions; track lehrjahr.id) {
+      <label class="filter-option">
+        <input
+          type="checkbox"
+          [checked]="state.selectedLehrjahre().includes(lehrjahr.id)"
+          (change)="toggleLehrjahr(lehrjahr.id)"
+        />
+        <span>{{ lehrjahr.label }}</span>
+      </label>
+    }
+  </section>
+
+  <section class="filter-section">
+    <h2>Modultyp</h2>
+
+    @for (modultyp of modultypOptions; track modultyp) {
+      <label class="filter-option">
+        <input
+          type="checkbox"
+          [checked]="state.selectedModultypen().includes(modultyp)"
+          (change)="toggleModultyp(modultyp)"
+        />
+        <span>{{ modultyp }}</span>
+      </label>
+    }
+  </section>
+</aside>

@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { FilterSidebarComponent } from './features/filter-sidebar/filter-sidebar';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterLink, RouterOutlet],
+  standalone: true,
+  imports: [RouterOutlet, RouterLink, FilterSidebarComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
-export class App {
-}
+export class App {}
