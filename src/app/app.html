@@ -53,14 +53,57 @@
   <app-filter-sidebar></app-filter-sidebar>
 
   <main class="app-main">
-    <router-outlet></router-outlet>
+    <section class="page">
+      <header class="page-header">
+        <p class="eyebrow">Bildungsplan-App</p>
+        <h1>Strukturierte Suche im EFZ-Bildungsplan</h1>
+        <p>
+          Wähle zuerst ein EFZ, falls nötig eine Fachrichtung und danach einen Lernort aus.
+        </p>
+      </header>
+
+      @if (!state.isContextComplete()) {
+        <div class="empty-state">
+          <h2>Noch kein vollständiger Kontext</h2>
+          <p>
+            Suche, Detailansichten und Navigation werden erst aktiviert,
+            wenn die Auswahl vollständig ist.
+          </p>
+        </div>
+      } @else {
+        <div class="overview-grid">
+          <article class="overview-card">
+            <span class="count">{{ state.handlungskompetenzbereiche().length }}</span>
+            <h2>Handlungskompetenzbereiche</h2>
+          </article>
+
+          <article class="overview-card">
+            <span class="count">{{ state.handlungskompetenzen().length }}</span>
+            <h2>Handlungskompetenzen</h2>
+          </article>
+
+          <article class="overview-card">
+            <span class="count">{{ state.module().length }}</span>
+            <h2>Module im Kontext</h2>
+          </article>
+        </div>
+
+        @if (!state.selectedLernort()) {
+          <div class="empty-state">
+            <h2>Noch kein Lernort ausgewählt</h2>
+            <p>Wähle einen Lernort aus, um die zugehörigen Module anzuzeigen.</p>
+          </div>
+        } @else {
+          <section class="module-list">
+            @for (modul of state.visibleModule(); track modul.id) {
+              <article class="module-card">
+                <h3>{{ modul.kennung }}</h3>
+                <p>{{ modul.beschreibung }}</p>
+              </article>
+            }
+          </section>
+        }
+      }
+    </section>
   </main>
 </div>
-
-<main class="app-layout">
-  <app-filter-sidebar></app-filter-sidebar>
-
-  <section class="app-content">
-    <router-outlet></router-outlet>
-  </section>
-</main>

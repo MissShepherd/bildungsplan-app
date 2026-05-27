@@ -1,13 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 
-import { BildungsplanStateService } from '../../core/state/bildungsplan-state.service';
+import { BildungsplanContextService } from '../../core/services/bildungsplan-context.service';
+import { EfzService } from '../../core/services/efz.service';
 import { FachrichtungService } from '../../core/services/fachrichtung.service';
+import { BildungsplanStateService } from '../../core/state/bildungsplan-state.service';
+import { Efz } from '../../models/efz.model';
 import { Fachrichtung } from '../../models/fachrichtung.model';
-
-interface FilterOption {
-  id: number;
-  label: string;
-}
 
 @Component({
   selector: 'app-filter-sidebar',
@@ -15,60 +13,46 @@ interface FilterOption {
   templateUrl: './filter-sidebar.html',
   styleUrl: './filter-sidebar.css',
 })
-export class FilterSidebarComponent {
+export class FilterSidebarComponent implements OnInit {
   readonly state = inject(BildungsplanStateService);
 
+  private readonly efzService = inject(EfzService);
   private readonly fachrichtungService = inject(FachrichtungService);
+  private readonly contextService = inject(BildungsplanContextService);
 
-  readonly efzOptions: FilterOption[] = [
-    { id: 1, label: 'Informatikerin/Informatiker' },
-    { id: 2, label: 'ICT-Fachfrau/Fachmann' },
-    { id: 3, label: 'Entwicklerin digitales Business' },
-    { id: 4, label: 'Mediamatikerin / Mediamatiker' },
-  ];
+  ngOnInit(): void {
+    this.loadEfzList();
+  }
 
-  readonly lernortOptions: FilterOption[] = [
-    { id: 1, label: 'Betrieb' },
-    { id: 2, label: 'Berufsfachschule' },
-    { id: 3, label: 'Überbetriebliche Kurse' },
-  ];
-
-  readonly lehrjahrOptions: FilterOption[] = [
-    { id: 1, label: '1. Lehrjahr' },
-    { id: 2, label: '2. Lehrjahr' },
-    { id: 3, label: '3. Lehrjahr' },
-    { id: 4, label: '4. Lehrjahr' },
-  ];
-
-  readonly modultypOptions = [
-    'Pflichtmodul',
-    'Wahlpflichtmodul',
-    'Wahlmodul',
-  ];
-
-  selectEfz(efzId: number): void {
-    this.state.setEfz(efzId);
-    this.loadFachrichtungen(efzId);
+  selectEfz(efz: Efz): void {
+    this.state.selectEfz(efz);
+    this.loadFachrichtungen(efz.id);
   }
 
   selectFachrichtung(fachrichtung: Fachrichtung): void {
-    this.state.setSelectedFachrichtung(fachrichtung);
+    this.state.selectFachrichtung(fachrichtung);
+    this.loadContextForFachrichtung(fachrichtung.id);
   }
 
-  toggleLernort(lernortId: number): void {
-    this.state.toggleLernort(lernortId);
+  clearSelection(): void {
+    this.state.clearAll();
+    this.loadEfzList();
   }
 
-  toggleLehrjahr(lehrjahr: number): void {
-    this.state.toggleLehrjahr(lehrjahr);
-  }
+  private loadEfzList(): void {
+    this.state.setLoading(true);
+    this.state.setError(null);
 
-  toggleModultyp(modultyp: string): void {
-    this.state.toggleModultyp(modultyp);
-  }
-
-  clearFilters(): void {
-    this.state.clearFilters();
+    this.efzService.getAll().subscribe({
+      next: (efzList) => {
+        this.state.setEfzList(efzList);
+        this.state.setLoading(false);
+      },
+      error: () => {
+        this.state.setError('Die EFZ-Liste konnte nicht geladen werden.');
+        this.state.setLoading(false);
+      },
+    });
   }
 
   private loadFachrichtungen(efzId: number): void {
@@ -79,10 +63,58 @@ export class FilterSidebarComponent {
       next: (fachrichtungen) => {
         this.state.setFachrichtungen(fachrichtungen);
         this.state.setLoading(false);
+
+        if (fachrichtungen.length === 0) {
+          this.loadContextForEfz(efzId);
+        }
       },
       error: () => {
-        this.state.clearFachrichtungen();
-        this.state.setError('Die Fachrichtungen konnten nicht geladen werden.');
+        this.state.setError(
+          'Die Fachrichtungen zum ausgewählten EFZ konnten nicht geladen werden.'
+        );
+        this.state.setLoading(false);
+      },
+    });
+  }
+
+  private loadContextForEfz(efzId: number): void {
+    this.state.setLoading(true);
+    this.state.setError(null);
+
+    this.contextService.loadByEfz(efzId).subscribe({
+      next: (data) => {
+        this.state.setHandlungskompetenzbereiche(
+          data.handlungskompetenzbereiche
+        );
+        this.state.setHandlungskompetenzen(data.handlungskompetenzen);
+        this.state.setModule(data.module);
+        this.state.setLoading(false);
+      },
+      error: () => {
+        this.state.setError(
+          'Die Bildungsplandaten zum ausgewählten EFZ konnten nicht geladen werden.'
+        );
+        this.state.setLoading(false);
+      },
+    });
+  }
+
+  private loadContextForFachrichtung(fachrichtungId: number): void {
+    this.state.setLoading(true);
+    this.state.setError(null);
+
+    this.contextService.loadByFachrichtung(fachrichtungId).subscribe({
+      next: (data) => {
+        this.state.setLernorte(data.lernorte);
+        this.state.setHandlungskompetenzbereiche(data.handlungskompetenzbereiche);
+        this.state.setHandlungskompetenzen(data.handlungskompetenzen);
+        this.state.setModule(data.module);
+        this.state.setLoading(false);
+      },
+      error: () => {
+        this.state.setError(
+          'Die Bildungsplandaten zur ausgewählten Fachrichtung konnten nicht geladen werden.'
+        );
         this.state.setLoading(false);
       },
     });

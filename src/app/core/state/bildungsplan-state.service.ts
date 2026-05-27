@@ -1,99 +1,113 @@
-import { computed, Injectable, signal, WritableSignal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 
 import { Efz } from '../../models/efz.model';
 import { Fachrichtung } from '../../models/fachrichtung.model';
+import { Handlungskompetenzbereich } from '../../models/handlungskompetenzbereich.model';
+import { Handlungskompetenz } from '../../models/handlungskompetenz.model';
+import { Modul } from '../../models/modul.model';
+import { Lernort } from '../../models/lernort.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BildungsplanStateService {
+  readonly efzList = signal<Efz[]>([]);
+  readonly fachrichtungen = signal<Fachrichtung[]>([]);
+  readonly handlungskompetenzbereiche = signal<Handlungskompetenzbereich[]>([]);
+  readonly handlungskompetenzen = signal<Handlungskompetenz[]>([]);
+  readonly module = signal<Modul[]>([]);
+
   readonly selectedEfz = signal<Efz | null>(null);
   readonly selectedFachrichtung = signal<Fachrichtung | null>(null);
+  readonly selectedHandlungskompetenzbereich =
+    signal<Handlungskompetenzbereich | null>(null);
+  readonly selectedHandlungskompetenz = signal<Handlungskompetenz | null>(null);
+  readonly selectedModul = signal<Modul | null>(null);
 
-  readonly selectedEfzId = signal<number | null>(null);
-  readonly selectedFachrichtungId = signal<number | null>(null);
-
-  readonly fachrichtungen = signal<Fachrichtung[]>([]);
   readonly fachrichtungenLoaded = signal(false);
-
-  readonly selectedLernortIds = signal<number[]>([]);
-  readonly selectedLehrjahre = signal<number[]>([]);
-  readonly selectedModultypen = signal<string[]>([]);
-
   readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
 
-  readonly hasSelectedEfz = computed(() => this.selectedEfzId() !== null);
+  readonly lernorte = signal<Lernort[]>([]);
+  readonly selectedLernort = signal<Lernort | null>(null);
 
-  readonly hasSelectedFachrichtung = computed(
-    () => this.selectedFachrichtungId() !== null
+  readonly selectedEfzId = computed(() => this.selectedEfz()?.id ?? null);
+  readonly selectedFachrichtungId = computed(
+    () => this.selectedFachrichtung()?.id ?? null
   );
 
-  readonly hasFachrichtungen = computed(
-    () => this.fachrichtungen().length > 0
+  readonly requiresFachrichtung = computed(
+    () =>
+      this.selectedEfz() !== null &&
+      this.fachrichtungenLoaded() &&
+      this.fachrichtungen().length > 0
   );
 
-  readonly requiresFachrichtung = computed(() =>
-    this.selectedEfzId() !== null &&
-    this.fachrichtungenLoaded() &&
-    this.fachrichtungen().length > 0
+  readonly selectedLernortId = computed(() => this.selectedLernort()?.id ?? null);
+
+readonly visibleLernorte = computed(() => {
+  const usedLernortIds = new Set(
+    this.module()
+      .map((modul) => modul.lernortId)
+      .filter((lernortId): lernortId is number => lernortId !== undefined && lernortId !== null)
   );
 
-  readonly isContextComplete = computed(() =>
-    this.selectedEfzId() !== null &&
-    this.fachrichtungenLoaded() &&
-    (
+  return this.lernorte().filter((lernort) => usedLernortIds.has(lernort.id));
+});
+
+readonly visibleModule = computed(() => {
+  const selectedLernortId = this.selectedLernortId();
+
+  if (!selectedLernortId) {
+    return [];
+  }
+
+  return this.module().filter((modul) => modul.lernortId === selectedLernortId);
+});
+
+  readonly isContextComplete = computed(() => {
+    if (!this.selectedEfz()) {
+      return false;
+    }
+
+    if (!this.fachrichtungenLoaded()) {
+      return false;
+    }
+
+    return (
       this.fachrichtungen().length === 0 ||
-      this.selectedFachrichtungId() !== null
-    )
-  );
+      this.selectedFachrichtung() !== null
+    );
+  });
 
-  readonly hasActiveFilters = computed(() =>
-    this.selectedEfzId() !== null ||
-    this.selectedFachrichtungId() !== null ||
-    this.selectedLernortIds().length > 0 ||
-    this.selectedLehrjahre().length > 0 ||
-    this.selectedModultypen().length > 0
-  );
+  readonly contextLabel = computed(() => {
+    const efz = this.selectedEfz();
+    const fachrichtung = this.selectedFachrichtung();
 
-  setSelectedEfz(efz: Efz | null): void {
+    if (!efz) {
+      return 'Kein EFZ ausgewählt';
+    }
+
+    if (!fachrichtung) {
+      return efz.titel;
+    }
+
+    return `${efz.titel} / ${fachrichtung.titel}`;
+  });
+
+  setEfzList(efzList: Efz[]): void {
+    this.efzList.set(efzList);
+  }
+
+  selectEfz(efz: Efz): void {
     this.selectedEfz.set(efz);
-    this.selectedEfzId.set(efz?.id ?? null);
-
     this.selectedFachrichtung.set(null);
-    this.selectedFachrichtungId.set(null);
 
     this.fachrichtungen.set([]);
     this.fachrichtungenLoaded.set(false);
 
-    this.selectedLernortIds.set([]);
-    this.selectedLehrjahre.set([]);
-    this.selectedModultypen.set([]);
-  }
-
-  setSelectedFachrichtung(fachrichtung: Fachrichtung | null): void {
-    this.selectedFachrichtung.set(fachrichtung);
-    this.selectedFachrichtungId.set(fachrichtung?.id ?? null);
-  }
-
-  setEfz(efzId: number): void {
-    this.selectedEfz.set(null);
-    this.selectedEfzId.set(efzId);
-
-    this.selectedFachrichtung.set(null);
-    this.selectedFachrichtungId.set(null);
-
-    this.fachrichtungen.set([]);
-    this.fachrichtungenLoaded.set(false);
-
-    this.selectedLernortIds.set([]);
-    this.selectedLehrjahre.set([]);
-    this.selectedModultypen.set([]);
-  }
-
-  setFachrichtung(fachrichtungId: number): void {
-    this.selectedFachrichtung.set(null);
-    this.selectedFachrichtungId.set(fachrichtungId);
+    this.clearBusinessObjectSelection();
+    this.clearContextData();
   }
 
   setFachrichtungen(fachrichtungen: Fachrichtung[]): void {
@@ -101,9 +115,53 @@ export class BildungsplanStateService {
     this.fachrichtungenLoaded.set(true);
   }
 
-  clearFachrichtungen(): void {
-    this.fachrichtungen.set([]);
-    this.fachrichtungenLoaded.set(false);
+  selectFachrichtung(fachrichtung: Fachrichtung): void {
+    this.selectedFachrichtung.set(fachrichtung);
+
+    this.clearBusinessObjectSelection();
+    this.clearContextData();
+  }
+
+  setHandlungskompetenzbereiche(
+    handlungskompetenzbereiche: Handlungskompetenzbereich[]
+  ): void {
+    this.handlungskompetenzbereiche.set(handlungskompetenzbereiche);
+  }
+
+  setHandlungskompetenzen(handlungskompetenzen: Handlungskompetenz[]): void {
+    this.handlungskompetenzen.set(handlungskompetenzen);
+  }
+
+  setModule(module: Modul[]): void {
+    this.module.set(module);
+  }
+
+  selectHandlungskompetenzbereich(
+    handlungskompetenzbereich: Handlungskompetenzbereich | null
+  ): void {
+    this.selectedHandlungskompetenzbereich.set(handlungskompetenzbereich);
+    this.selectedHandlungskompetenz.set(null);
+    this.selectedModul.set(null);
+  }
+
+  selectHandlungskompetenz(
+    handlungskompetenz: Handlungskompetenz | null
+  ): void {
+    this.selectedHandlungskompetenz.set(handlungskompetenz);
+    this.selectedModul.set(null);
+  }
+
+  selectModul(modul: Modul | null): void {
+    this.selectedModul.set(modul);
+  }
+
+    setLernorte(lernorte: Lernort[]): void {
+    this.lernorte.set(lernorte);
+  }
+
+  selectLernort(lernort: Lernort | null): void {
+    this.selectedLernort.set(lernort);
+    this.selectedModul.set(null);
   }
 
   setLoading(isLoading: boolean): void {
@@ -114,77 +172,30 @@ export class BildungsplanStateService {
     this.error.set(error);
   }
 
-  toggleLernort(lernortId: number): void {
-    this.toggleNumberValue(this.selectedLernortIds, lernortId);
+  clearBusinessObjectSelection(): void {
+    this.selectedHandlungskompetenzbereich.set(null);
+    this.selectedHandlungskompetenz.set(null);
+    this.selectedModul.set(null);
   }
 
-  toggleLehrjahr(lehrjahr: number): void {
-    this.toggleNumberValue(this.selectedLehrjahre, lehrjahr);
+  clearContextData(): void {
+    this.handlungskompetenzbereiche.set([]);
+    this.handlungskompetenzen.set([]);
+    this.module.set([]);
   }
 
-  toggleModultyp(modultyp: string): void {
-    this.toggleStringValue(this.selectedModultypen, modultyp);
-  }
-
-  clearFilters(): void {
+  clearAll(): void {
     this.selectedEfz.set(null);
-    this.selectedEfzId.set(null);
-
     this.selectedFachrichtung.set(null);
-    this.selectedFachrichtungId.set(null);
-
     this.fachrichtungen.set([]);
     this.fachrichtungenLoaded.set(false);
+    this.selectedLernort.set(null);
+    this.lernorte.set([]);
 
-    this.selectedLernortIds.set([]);
-    this.selectedLehrjahre.set([]);
-    this.selectedModultypen.set([]);
+    this.clearBusinessObjectSelection();
+    this.clearContextData();
 
     this.isLoading.set(false);
     this.error.set(null);
   }
-
-  private toggleNumberValue(target: WritableSignal<number[]>, value: number): void {
-    const currentValues = target();
-
-    if (currentValues.includes(value)) {
-      target.set(currentValues.filter((item) => item !== value));
-      return;
-    }
-
-    target.set([...currentValues, value]);
-  }
-
-  private toggleStringValue(target: WritableSignal<string[]>, value: string): void {
-    const currentValues = target();
-
-    if (currentValues.includes(value)) {
-      target.set(currentValues.filter((item) => item !== value));
-      return;
-    }
-
-    target.set([...currentValues, value]);
-  }
-  
-  readonly hasEfz = computed(() => this.hasSelectedEfz());
-
-readonly errorMessage = computed(() => this.error());
-
-readonly contextLabel = computed(() => {
-  const efz = this.selectedEfz();
-  const fachrichtung = this.selectedFachrichtung();
-
-  if (!efz && !this.selectedEfzId()) {
-    return 'Kein EFZ ausgewählt';
-  }
-
-  const efzLabel = efz?.titel ?? `EFZ ${this.selectedEfzId()}`;
-
-  if (!fachrichtung) {
-    return efzLabel;
-  }
-
-  return `${efzLabel} / ${fachrichtung.titel}`;
-});
 }
-

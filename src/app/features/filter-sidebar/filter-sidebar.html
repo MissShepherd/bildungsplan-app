@@ -1,104 +1,89 @@
 <aside class="filter-sidebar">
-  <div class="filter-header">
-    <div class="filter-title">
-      <span aria-hidden="true">▽</span>
-      <span>Filter</span>
-    </div>
-
-    <button
-      type="button"
-      class="clear-button"
-      [disabled]="!state.hasActiveFilters()"
-      (click)="clearFilters()"
-    >
-      clear filter
-    </button>
+  <div class="sidebar-header">
+    <h2>Kontext</h2>
+    <p>{{ state.contextLabel() }}</p>
   </div>
 
-  <section class="filter-section">
-    <h3>EFZ</h3>
-
-    @for (efz of efzOptions; track efz.id) {
-      <label class="filter-option">
-        <input
-          type="radio"
-          name="efz"
-          [checked]="state.selectedEfzId() === efz.id"
-          (change)="selectEfz(efz.id)"
-        />
-        <span>{{ efz.label }}</span>
-      </label>
-    }
-  </section>
+  @if (state.error()) {
+    <div class="error-box">
+      {{ state.error() }}
+    </div>
+  }
 
   <section class="filter-section">
-    <h3>Fachrichtung</h3>
+    <h3>EFZ auswählen</h3>
 
-    @if (!state.hasSelectedEfz()) {
-      <p class="filter-hint">
-        Wählen Sie zuerst ein EFZ aus. Falls Fachrichtungen vorhanden sind, muss danach eine Fachrichtung gewählt werden.
-      </p>
-    } @else if (state.isLoading()) {
-      <p class="filter-hint">Fachrichtungen werden geladen...</p>
-    } @else if (state.fachrichtungen().length === 0 && state.fachrichtungenLoaded()) {
-      <p class="filter-hint">Für dieses EFZ sind keine Fachrichtungen vorhanden.</p>
+    @if (state.efzList().length === 0 && state.isLoading()) {
+      <p class="hint">EFZ werden geladen...</p>
     } @else {
-      @for (fachrichtung of state.fachrichtungen(); track fachrichtung.id) {
-        <label class="filter-option">
-          <input
-            type="radio"
-            name="fachrichtung"
-            [checked]="state.selectedFachrichtungId() === fachrichtung.id"
-            (change)="selectFachrichtung(fachrichtung)"
-          />
-          <span>{{ fachrichtung.titel }}</span>
-        </label>
+      <div class="option-list">
+        @for (efz of state.efzList(); track efz.id) {
+          <button
+            type="button"
+            class="option-button"
+            [class.active]="state.selectedEfzId() === efz.id"
+            (click)="selectEfz(efz)"
+          >
+            <span class="option-title">{{ efz.titel }}</span>
+            <span class="option-id">ID {{ efz.id }}</span>
+          </button>
+        }
+      </div>
+    }
+  </section>
+
+  @if (state.requiresFachrichtung()) {
+    <section class="filter-section">
+      <h3>Fachrichtung auswählen</h3>
+      <p class="hint">Für dieses EFZ ist eine Fachrichtung erforderlich.</p>
+
+      <div class="option-list">
+        @for (fachrichtung of state.fachrichtungen(); track fachrichtung.id) {
+          <button
+            type="button"
+            class="option-button"
+            [class.active]="state.selectedFachrichtungId() === fachrichtung.id"
+            (click)="selectFachrichtung(fachrichtung)"
+          >
+            <span class="option-title">{{ fachrichtung.titel }}</span>
+            <span class="option-id">ID {{ fachrichtung.id }}</span>
+          </button>
+        }
+      </div>
+    </section>
+  }
+    <section class="filter-section">
+      <h3>Lernort auswählen</h3>
+
+      @if (state.visibleLernorte().length === 0) {
+        <p class="hint">Für den aktuellen Kontext wurden keine Lernorte gefunden.</p>
+      } @else {
+        <div class="option-list">
+          @for (lernort of state.visibleLernorte(); track lernort.id) {
+            <button
+              type="button"
+              class="option-button"
+              [class.active]="state.selectedLernortId() === lernort.id"
+              (click)="state.selectLernort(lernort)"
+            >
+              <span class="option-title">{{ lernort.kennung }}</span>
+              <span class="option-id">{{ lernort.beschreibung }}</span>
+            </button>
+          }
+        </div>
       }
-    }
-  </section>
-
+</section>
   <section class="filter-section">
-    <h3>Lernort</h3>
+    <h3>Status</h3>
 
-    @for (lernort of lernortOptions; track lernort.id) {
-      <label class="filter-option">
-        <input
-          type="checkbox"
-          [checked]="state.selectedLernortIds().includes(lernort.id)"
-          (change)="toggleLernort(lernort.id)"
-        />
-        <span>{{ lernort.label }}</span>
-      </label>
+    @if (state.isContextComplete()) {
+      <p class="status-ready">Kontext vollständig</p>
+    } @else {
+      <p class="status-blocked">Bitte zuerst EFZ und falls nötig Fachrichtung wählen.</p>
     }
   </section>
 
-  <section class="filter-section">
-    <h3>Lehrjahr</h3>
-
-    @for (lehrjahr of lehrjahrOptions; track lehrjahr.id) {
-      <label class="filter-option">
-        <input
-          type="checkbox"
-          [checked]="state.selectedLehrjahre().includes(lehrjahr.id)"
-          (change)="toggleLehrjahr(lehrjahr.id)"
-        />
-        <span>{{ lehrjahr.label }}</span>
-      </label>
-    }
-  </section>
-
-  <section class="filter-section">
-    <h3>Modultyp</h3>
-
-    @for (modultyp of modultypOptions; track modultyp) {
-      <label class="filter-option">
-        <input
-          type="checkbox"
-          [checked]="state.selectedModultypen().includes(modultyp)"
-          (change)="toggleModultyp(modultyp)"
-        />
-        <span>{{ modultyp }}</span>
-      </label>
-    }
-  </section>
+  <button type="button" class="reset-button" (click)="clearSelection()">
+    Auswahl zurücksetzen
+  </button>
 </aside>
