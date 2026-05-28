@@ -2,10 +2,10 @@ export interface Modul {
   id: number;
   kennung: string;
   beschreibung: string;
-  lehrjahr?: number;
-  pflicht?: boolean;
-  lernortId?: number;
-  efzId?: number;
+  lehrjahr?: number | null;
+  pflicht?: boolean | null;
+  lernortId?: number | null;
+  efzId?: number | null;
   fachrichtungen?: number[];
   handlungskompetenzIds?: number[];
 }
