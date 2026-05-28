@@ -1,1 +1,82 @@
-<p>hk-overview works!</p>
+<section class="hk-page">
+  <header class="page-header">
+    <p class="eyebrow">Handlungskompetenzen</p>
+    <h1>Handlungskompetenzen im gewählten Kontext</h1>
+    <p>
+      Die Handlungskompetenzen werden passend zum ausgewählten EFZ und falls vorhanden
+      zur gewählten Fachrichtung angezeigt.
+    </p>
+  </header>
+
+  <section class="search-section" aria-label="Suche nach Handlungskompetenzen">
+    <div class="search-box">
+      <input
+        type="search"
+        placeholder="Value"
+        [value]="searchTerm()"
+        (input)="updateSearchTerm($event)"
+        [disabled]="!state.isContextComplete()"
+      />
+
+      @if (searchTerm()) {
+        <button type="button" (click)="clearSearch()" aria-label="Suche zurücksetzen">
+          ×
+        </button>
+      } @else {
+        <span aria-hidden="true">⌕</span>
+      }
+    </div>
+
+    <div class="active-filters" aria-label="Aktive Filter">
+      <span>Active filters:</span>
+
+      @if (state.isContextComplete()) {
+        <strong>{{ contextLabel() }}</strong>
+      } @else {
+        <strong>Kein vollständiger Kontext</strong>
+      }
+    </div>
+  </section>
+
+  @if (!state.isContextComplete()) {
+    <section class="empty-state">
+      <h2>Noch kein vollständiger Kontext</h2>
+      <p>
+        Wähle zuerst ein EFZ aus. Falls für das EFZ Fachrichtungen vorhanden sind,
+        muss zusätzlich eine Fachrichtung gewählt werden.
+      </p>
+    </section>
+  } @else if (visibleHandlungskompetenzen().length === 0) {
+    <section class="empty-state">
+      <h2>Keine Handlungskompetenzen gefunden</h2>
+      <p>
+        Für den aktuellen Kontext oder den eingegebenen Suchbegriff wurden keine
+        Handlungskompetenzen gefunden.
+      </p>
+    </section>
+  } @else {
+    <section class="hk-grid" aria-label="Liste der Handlungskompetenzen">
+      @for (hk of visibleHandlungskompetenzen(); track hkId(hk)) {
+        <a
+          class="hk-card"
+          [routerLink]="['/handlungskompetenzen', hkId(hk)]"
+        >
+          <article>
+            <div class="hk-content">
+              <span class="hk-code">{{ hkCode(hk) }}</span>
+              <h2>{{ hkTitle(hk) }}</h2>
+              <p>{{ hkDescription(hk) }}</p>
+            </div>
+
+            <footer class="hk-tags">
+              <span class="tag tag-primary">{{ contextLabel() }}</span>
+              <span class="tag tag-warning">{{ hkbLabel(hk) }}</span>
+              <span class="tag tag-soft">{{ lehrjahrLabel(hk) }}</span>
+              <span class="tag tag-info">{{ moduleCountLabel(hk) }}</span>
+            </footer>
+          </article>
+        </a>
+      }
+    </section>
+  }
+</section>
