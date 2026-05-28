@@ -1,47 +1,49 @@
 <section class="module-page">
-  <header class="page-header">
-    <p class="eyebrow">Module</p>
-    <h1>Module im gewählten Bildungsplan-Kontext</h1>
-    <p>
-      Die Module werden erst angezeigt, wenn ein EFZ und falls nötig eine Fachrichtung
-      ausgewählt wurden. Zusätzlich kann ein Lernort gewählt werden, um die Anzeige
-      weiter einzugrenzen.
-    </p>
-  </header>
+  <div class="sticky-page-header">
+    <header class="page-header">
+      <p class="eyebrow">Module</p>
+      <h1>Module im gewählten Bildungsplan-Kontext</h1>
+      <p>
+        Die Module werden erst angezeigt, wenn ein EFZ und falls nötig eine Fachrichtung
+        ausgewählt wurden. Zusätzlich kann ein Lernort gewählt werden, um die Anzeige
+        weiter einzugrenzen.
+      </p>
+    </header>
 
-  <section class="search-section" aria-label="Suche nach Modulen">
-    <div class="search-box">
-      <input
-        type="search"
-        placeholder="Value"
-        [value]="searchTerm()"
-        (input)="updateSearchTerm($event)"
-        [disabled]="!state.isContextComplete() || !state.selectedLernort()"
-      />
+    <section class="search-section" aria-label="Suche nach Modulen">
+      <div class="search-box">
+        <input
+          type="search"
+          placeholder="Value"
+          [value]="searchTerm()"
+          (input)="updateSearchTerm($event)"
+          [disabled]="!state.isContextComplete() || !state.selectedLernort()"
+        />
 
-      @if (searchTerm()) {
-        <button type="button" (click)="clearSearch()" aria-label="Suche zurücksetzen">
-          ×
-        </button>
-      } @else {
-        <span aria-hidden="true">⌕</span>
-      }
-    </div>
+        @if (searchTerm()) {
+          <button type="button" (click)="clearSearch()" aria-label="Suche zurücksetzen">
+            ×
+          </button>
+        } @else {
+          <span aria-hidden="true">⌕</span>
+        }
+      </div>
 
-    <div class="active-filters" aria-label="Aktive Filter">
-      <span>Active filters:</span>
+      <div class="active-filters" aria-label="Aktive Filter">
+        <span>Active filters:</span>
 
-      @if (state.isContextComplete()) {
-        <strong>{{ contextLabel() }}</strong>
-      } @else {
-        <strong>Kein vollständiger Kontext</strong>
-      }
+        @if (state.isContextComplete()) {
+          <strong>{{ contextLabel() }}</strong>
+        } @else {
+          <strong>Kein vollständiger Kontext</strong>
+        }
 
-      @if (state.selectedLernort()) {
-        <strong>Lernort gewählt</strong>
-      }
-    </div>
-  </section>
+        @if (state.selectedLernort()) {
+          <strong>Lernort gewählt</strong>
+        }
+      </div>
+    </section>
+  </div>
 
   @if (!state.isContextComplete()) {
     <section class="empty-state">

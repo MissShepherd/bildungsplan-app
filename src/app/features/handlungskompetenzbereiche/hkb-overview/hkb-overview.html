@@ -1,42 +1,44 @@
 <section class="hkb-page">
-  <header class="page-header">
-    <p class="eyebrow">Handlungskompetenzbereiche</p>
-    <h1>Handlungskompetenzbereiche im gewählten Kontext</h1>
-    <p>
-      Die Handlungskompetenzbereiche werden passend zum ausgewählten EFZ und
-      falls vorhanden zur gewählten Fachrichtung angezeigt.
-    </p>
-  </header>
+  <div class="sticky-page-header">
+    <header class="page-header">
+      <p class="eyebrow">Handlungskompetenzbereiche</p>
+      <h1>Handlungskompetenzbereiche im gewählten Kontext</h1>
+      <p>
+        Die Handlungskompetenzbereiche werden passend zum ausgewählten EFZ und
+        falls vorhanden zur gewählten Fachrichtung angezeigt.
+      </p>
+    </header>
 
-  <section class="search-section" aria-label="Suche nach Handlungskompetenzbereichen">
-    <div class="search-box">
-      <input
-        type="search"
-        placeholder="Value"
-        [value]="searchTerm()"
-        (input)="updateSearchTerm($event)"
-        [disabled]="!state.isContextComplete()"
-      />
+    <section class="search-section" aria-label="Suche nach Handlungskompetenzbereichen">
+      <div class="search-box">
+        <input
+          type="search"
+          placeholder="Value"
+          [value]="searchTerm()"
+          (input)="updateSearchTerm($event)"
+          [disabled]="!state.isContextComplete()"
+        />
 
-      @if (searchTerm()) {
-        <button type="button" (click)="clearSearch()" aria-label="Suche zurücksetzen">
-          ×
-        </button>
-      } @else {
-        <span aria-hidden="true">⌕</span>
-      }
-    </div>
+        @if (searchTerm()) {
+          <button type="button" (click)="clearSearch()" aria-label="Suche zurücksetzen">
+            ×
+          </button>
+        } @else {
+          <span aria-hidden="true">⌕</span>
+        }
+      </div>
 
-    <div class="active-filters" aria-label="Aktive Filter">
-      <span>Active filters:</span>
+      <div class="active-filters" aria-label="Aktive Filter">
+        <span>Active filters:</span>
 
-      @if (state.isContextComplete()) {
-        <strong>{{ contextLabel() }}</strong>
-      } @else {
-        <strong>Kein vollständiger Kontext</strong>
-      }
-    </div>
-  </section>
+        @if (state.isContextComplete()) {
+          <strong>{{ contextLabel() }}</strong>
+        } @else {
+          <strong>Kein vollständiger Kontext</strong>
+        }
+      </div>
+    </section>
+  </div>
 
   @if (!state.isContextComplete()) {
     <section class="empty-state">
