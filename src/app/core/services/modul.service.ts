@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { API_BASE_URL } from '../config/api.config';
 import { Handlungskompetenz } from '../../models/handlungskompetenz.model';
 import { Modul } from '../../models/modul.model';
 
@@ -22,7 +23,7 @@ export interface ModulSuchkriterien {
 })
 export class ModulService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = '/api/module';
+  private readonly apiUrl = `${API_BASE_URL}/api/module`;
 
   getAll(): Observable<Modul[]> {
     return this.http.get<Modul[]>(this.apiUrl);

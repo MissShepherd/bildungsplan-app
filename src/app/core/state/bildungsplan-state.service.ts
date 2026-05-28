@@ -4,8 +4,8 @@ import { Efz } from '../../models/efz.model';
 import { Fachrichtung } from '../../models/fachrichtung.model';
 import { Handlungskompetenzbereich } from '../../models/handlungskompetenzbereich.model';
 import { Handlungskompetenz } from '../../models/handlungskompetenz.model';
-import { Modul } from '../../models/modul.model';
 import { Lernort } from '../../models/lernort.model';
+import { Modul } from '../../models/modul.model';
 
 @Injectable({
   providedIn: 'root',
@@ -13,27 +13,37 @@ import { Lernort } from '../../models/lernort.model';
 export class BildungsplanStateService {
   readonly efzList = signal<Efz[]>([]);
   readonly fachrichtungen = signal<Fachrichtung[]>([]);
+  readonly lernorte = signal<Lernort[]>([]);
   readonly handlungskompetenzbereiche = signal<Handlungskompetenzbereich[]>([]);
   readonly handlungskompetenzen = signal<Handlungskompetenz[]>([]);
   readonly module = signal<Modul[]>([]);
 
   readonly selectedEfz = signal<Efz | null>(null);
   readonly selectedFachrichtung = signal<Fachrichtung | null>(null);
+  readonly selectedLernort = signal<Lernort | null>(null);
   readonly selectedHandlungskompetenzbereich =
     signal<Handlungskompetenzbereich | null>(null);
   readonly selectedHandlungskompetenz = signal<Handlungskompetenz | null>(null);
   readonly selectedModul = signal<Modul | null>(null);
 
+  readonly searchTerm = signal('');
+
   readonly fachrichtungenLoaded = signal(false);
   readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
 
-  readonly lernorte = signal<Lernort[]>([]);
-  readonly selectedLernort = signal<Lernort | null>(null);
-
   readonly selectedEfzId = computed(() => this.selectedEfz()?.id ?? null);
+
   readonly selectedFachrichtungId = computed(
     () => this.selectedFachrichtung()?.id ?? null
+  );
+
+  readonly selectedLernortId = computed(() => this.selectedLernort()?.id ?? null);
+
+  readonly hasSearchTerm = computed(() => this.normalizedSearchTerm().length > 0);
+
+  readonly normalizedSearchTerm = computed(() =>
+    this.searchTerm().trim().toLowerCase()
   );
 
   readonly requiresFachrichtung = computed(
@@ -42,28 +52,6 @@ export class BildungsplanStateService {
       this.fachrichtungenLoaded() &&
       this.fachrichtungen().length > 0
   );
-
-  readonly selectedLernortId = computed(() => this.selectedLernort()?.id ?? null);
-
-readonly visibleLernorte = computed(() => {
-  const usedLernortIds = new Set(
-    this.module()
-      .map((modul) => modul.lernortId)
-      .filter((lernortId): lernortId is number => lernortId !== undefined && lernortId !== null)
-  );
-
-  return this.lernorte().filter((lernort) => usedLernortIds.has(lernort.id));
-});
-
-readonly visibleModule = computed(() => {
-  const selectedLernortId = this.selectedLernortId();
-
-  if (!selectedLernortId) {
-    return [];
-  }
-
-  return this.module().filter((modul) => modul.lernortId === selectedLernortId);
-});
 
   readonly isContextComplete = computed(() => {
     if (!this.selectedEfz()) {
@@ -95,6 +83,38 @@ readonly visibleModule = computed(() => {
     return `${efz.titel} / ${fachrichtung.titel}`;
   });
 
+  readonly visibleLernorte = computed(() => {
+    const usedLernortIds = new Set(
+      this.module()
+        .map((modul) => modul.lernortId)
+        .filter(
+          (lernortId): lernortId is number =>
+            lernortId !== undefined && lernortId !== null
+        )
+    );
+
+    return this.lernorte().filter((lernort) => usedLernortIds.has(lernort.id));
+  });
+
+  readonly visibleModule = computed(() => {
+    const selectedLernortId = this.selectedLernortId();
+
+    if (!selectedLernortId) {
+      return [];
+    }
+
+    return this.module().filter(
+      (modul) => modul.lernortId === selectedLernortId
+    );
+  });
+
+  readonly hasContextData = computed(
+    () =>
+      this.handlungskompetenzbereiche().length > 0 ||
+      this.handlungskompetenzen().length > 0 ||
+      this.module().length > 0
+  );
+
   setEfzList(efzList: Efz[]): void {
     this.efzList.set(efzList);
   }
@@ -106,6 +126,7 @@ readonly visibleModule = computed(() => {
     this.fachrichtungen.set([]);
     this.fachrichtungenLoaded.set(false);
 
+    this.clearSearch();
     this.clearBusinessObjectSelection();
     this.clearContextData();
   }
@@ -118,8 +139,18 @@ readonly visibleModule = computed(() => {
   selectFachrichtung(fachrichtung: Fachrichtung): void {
     this.selectedFachrichtung.set(fachrichtung);
 
+    this.clearSearch();
     this.clearBusinessObjectSelection();
     this.clearContextData();
+  }
+
+  setLernorte(lernorte: Lernort[]): void {
+    this.lernorte.set(lernorte);
+  }
+
+  selectLernort(lernort: Lernort | null): void {
+    this.selectedLernort.set(lernort);
+    this.selectedModul.set(null);
   }
 
   setHandlungskompetenzbereiche(
@@ -155,13 +186,12 @@ readonly visibleModule = computed(() => {
     this.selectedModul.set(modul);
   }
 
-    setLernorte(lernorte: Lernort[]): void {
-    this.lernorte.set(lernorte);
+  setSearchTerm(searchTerm: string): void {
+    this.searchTerm.set(searchTerm);
   }
 
-  selectLernort(lernort: Lernort | null): void {
-    this.selectedLernort.set(lernort);
-    this.selectedModul.set(null);
+  clearSearch(): void {
+    this.searchTerm.set('');
   }
 
   setLoading(isLoading: boolean): void {
@@ -179,6 +209,8 @@ readonly visibleModule = computed(() => {
   }
 
   clearContextData(): void {
+    this.selectedLernort.set(null);
+    this.lernorte.set([]);
     this.handlungskompetenzbereiche.set([]);
     this.handlungskompetenzen.set([]);
     this.module.set([]);
@@ -187,11 +219,13 @@ readonly visibleModule = computed(() => {
   clearAll(): void {
     this.selectedEfz.set(null);
     this.selectedFachrichtung.set(null);
+    this.selectedLernort.set(null);
+
     this.fachrichtungen.set([]);
     this.fachrichtungenLoaded.set(false);
-    this.selectedLernort.set(null);
     this.lernorte.set([]);
 
+    this.clearSearch();
     this.clearBusinessObjectSelection();
     this.clearContextData();
 
