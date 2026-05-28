@@ -1,1 +1,94 @@
-<p>search-results works!</p>
+<section class="search-results" aria-label="Suchresultate">
+  <header class="results-header">
+    <div>
+      <p class="eyebrow">Suchresultate</p>
+      <h2>{{ totalResults() }} Treffer gefunden</h2>
+    </div>
+
+    <p>
+      Suchbegriff:
+      <strong>{{ searchTerm() }}</strong>
+    </p>
+  </header>
+
+  @if (hasHkbResults()) {
+    <section class="result-section">
+      <h3>Handlungskompetenzbereiche</h3>
+
+      <div class="result-list">
+        @for (hkb of hkbResults(); track hkb.id) {
+          <a
+            class="result-card"
+            [routerLink]="['/handlungskompetenzbereiche', hkb.id]"
+          >
+            <span class="result-type">HKB</span>
+            <strong>{{ hkb.kennung }}</strong>
+            <p>{{ hkb.beschreibung }}</p>
+          </a>
+        }
+      </div>
+    </section>
+  }
+
+  @if (hasHkResults()) {
+    <section class="result-section">
+      <h3>Handlungskompetenzen</h3>
+
+      <div class="result-list">
+        @for (hk of hkResults(); track hk.id) {
+          <a
+            class="result-card"
+            [routerLink]="['/handlungskompetenzen', hk.id]"
+          >
+            <span class="result-type">HK</span>
+            <strong>{{ hk.kennung }}</strong>
+            <p>{{ hk.beschreibung }}</p>
+
+            <div class="meta-row">
+              @if (hk.handlungskompetenzbereichKennung) {
+                <span>Bereich: {{ hk.handlungskompetenzbereichKennung }}</span>
+              }
+
+              @if (hk.lehrjahr) {
+                <span>Lehrjahr: {{ hk.lehrjahr }}</span>
+              }
+            </div>
+          </a>
+        }
+      </div>
+    </section>
+  }
+
+  @if (hasModulResults()) {
+    <section class="result-section">
+      <h3>Module</h3>
+
+      <div class="result-list">
+        @for (modul of modulResults(); track modul.id) {
+          <a
+            class="result-card"
+            [routerLink]="['/module', modul.id]"
+          >
+            <span class="result-type">Modul</span>
+            <strong>{{ modul.kennung }}</strong>
+            <p>{{ modul.beschreibung }}</p>
+
+            <div class="meta-row">
+              @if (modul.lehrjahr) {
+                <span>Lehrjahr: {{ modul.lehrjahr }}</span>
+              }
+
+              @if (modul.lernortId) {
+                <span>Lernort-ID: {{ modul.lernortId }}</span>
+              }
+
+              @if (modul.pflicht !== null && modul.pflicht !== undefined) {
+                <span>{{ modul.pflicht ? 'Pflichtmodul' : 'Nicht als Pflicht markiert' }}</span>
+              }
+            </div>
+          </a>
+        }
+      </div>
+    </section>
+  }
+</section>

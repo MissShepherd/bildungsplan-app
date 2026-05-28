@@ -1,1 +1,96 @@
-<p>search-page works!</p>
+<section class="search-page">
+  <header class="page-header">
+    <p class="eyebrow">Volltextsuche</p>
+    <h1>Bildungsplan durchsuchen</h1>
+    <p>
+      Die Suche berücksichtigt den aktuell gewählten Kontext. Handlungskompetenzbereiche
+      und Handlungskompetenzen werden clientseitig gefiltert, Module werden über die
+      Suchschnittstelle der API gesucht.
+    </p>
+  </header>
+
+  <section class="search-panel" aria-label="Volltextsuche im Bildungsplan">
+    <div class="context-box">
+      <span class="context-label">Aktueller Kontext</span>
+      <strong>{{ state.contextLabel() }}</strong>
+    </div>
+
+    <div class="search-row">
+      <label class="search-label" for="bildungsplan-search">
+        Suchbegriff
+      </label>
+
+      <div class="search-input-wrapper">
+        <input
+          id="bildungsplan-search"
+          type="search"
+          placeholder="Begriff, Kennung oder Beschreibung suchen"
+          [value]="state.searchTerm()"
+          (input)="updateSearchTerm($event)"
+          (keydown.enter)="search()"
+          [disabled]="!state.isContextComplete() || isSearching()"
+        />
+
+        @if (state.searchTerm()) {
+          <button
+            type="button"
+            class="clear-button"
+            aria-label="Suche zurücksetzen"
+            (click)="clearSearch()"
+            [disabled]="isSearching()"
+          >
+            ×
+          </button>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="search-button"
+        (click)="search()"
+        [disabled]="!canSearch()"
+      >
+        Suchen
+      </button>
+    </div>
+
+    @if (!state.isContextComplete()) {
+      <div class="info-state" role="status">
+        Bitte zuerst ein EFZ und falls vorhanden eine Fachrichtung auswählen.
+        Erst danach ist die Suche verfügbar.
+      </div>
+    }
+
+    @if (isSearching()) {
+      <div class="loading-state" role="status">
+        Suche wird ausgeführt...
+      </div>
+    }
+
+    @if (searchError()) {
+      <div class="error-state" role="alert">
+        {{ searchError() }}
+      </div>
+    }
+
+    @if (hasSearched() && !isSearching() && !searchError() && totalResults() === 0) {
+      <div class="empty-state" role="status">
+        <h2>Keine Treffer gefunden</h2>
+        <p>
+          Zum eingegebenen Suchbegriff wurden im aktuellen Kontext keine passenden
+          Handlungskompetenzbereiche, Handlungskompetenzen oder Module gefunden.
+        </p>
+      </div>
+    }
+  </section>
+
+  @if (hasSearched() && totalResults() > 0) {
+    <app-search-results
+      [searchTerm]="state.searchTerm()"
+      [hkbResults]="hkbResults()"
+      [hkResults]="hkResults()"
+      [modulResults]="modulResults()"
+      [totalResults]="totalResults()"
+    />
+  }
+</section>
