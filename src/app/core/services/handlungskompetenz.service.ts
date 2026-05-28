@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { API_BASE_URL } from '../config/api.config';
 import { Handlungskompetenz } from '../../models/handlungskompetenz.model';
 import { Modul } from '../../models/modul.model';
 
@@ -10,7 +11,7 @@ import { Modul } from '../../models/modul.model';
 })
 export class HandlungskompetenzService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = '/api/handlungskompetenzen';
+  private readonly apiUrl = `${API_BASE_URL}/api/handlungskompetenzen`;
 
   getAll(): Observable<Handlungskompetenz[]> {
     return this.http.get<Handlungskompetenz[]>(this.apiUrl);

@@ -71,21 +71,15 @@ export class HkbOverview {
   }
 
   hkbCode(hkb: Handlungskompetenzbereich): string {
-    const card = hkb as HkbCard;
-
-    return card.kennung ?? card.kuerzel ?? card.code ?? `HKB ${card.id ?? ''}`;
+    return hkb.kennung || `HKB ${hkb.id}`;
   }
 
   hkbTitle(hkb: Handlungskompetenzbereich): string {
-    const card = hkb as HkbCard;
-
-    return card.titel ?? card.bezeichnung ?? card.name ?? 'Unbenannter Handlungskompetenzbereich';
+    return hkb.kennung || `HKB ${hkb.id}`;
   }
 
   hkbDescription(hkb: Handlungskompetenzbereich): string {
-    const card = hkb as HkbCard;
-
-    return card.beschreibung ?? card.kurzbeschreibung ?? 'Keine Beschreibung vorhanden.';
+    return hkb.beschreibung || 'Keine Beschreibung vorhanden.';
   }
 
   handlungskompetenzCount(hkb: Handlungskompetenzbereich): number {

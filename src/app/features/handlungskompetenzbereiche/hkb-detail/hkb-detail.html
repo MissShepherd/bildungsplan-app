@@ -1,1 +1,63 @@
-<p>hkb-detail works!</p>
+<section class="detail-page">
+  <a class="back-link" routerLink="/handlungskompetenzbereiche">
+    Zurück zu den Handlungskompetenzbereichen
+  </a>
+
+  @if (isLoading()) {
+    <div class="loading-state" role="status">
+      Detaildaten werden geladen...
+    </div>
+  } @else if (error()) {
+    <div class="error-state" role="alert">
+      {{ error() }}
+    </div>
+  } @else if (hkb(); as hkb) {
+    <article class="detail-card">
+      <header class="detail-header">
+        <p class="eyebrow">Handlungskompetenzbereich</p>
+        <h1>{{ hkb.kennung }}</h1>
+        <p>{{ hkb.beschreibung }}</p>
+      </header>
+
+      <dl class="meta-grid">
+        <div>
+          <dt>ID</dt>
+          <dd>{{ hkb.id }}</dd>
+        </div>
+
+        <div>
+          <dt>EFZ-ID</dt>
+          <dd>{{ hkb.efzId }}</dd>
+        </div>
+
+        <div>
+          <dt>Fachrichtung-ID</dt>
+          <dd>{{ hkb.fachrichtungId ?? 'Allgemein' }}</dd>
+        </div>
+      </dl>
+    </article>
+
+    <section class="relation-section">
+      <h2>Zugehörige Handlungskompetenzen</h2>
+
+      @if (handlungskompetenzen().length > 0) {
+        <div class="relation-list">
+          @for (hk of handlungskompetenzen(); track hk.id) {
+            <a class="relation-card" [routerLink]="['/handlungskompetenzen', hk.id]">
+              <strong>{{ hk.kennung }}</strong>
+              <p>{{ hk.beschreibung }}</p>
+            </a>
+          }
+        </div>
+      } @else {
+        <div class="empty-state" role="status">
+          Zu diesem Handlungskompetenzbereich wurden keine Handlungskompetenzen gefunden.
+        </div>
+      }
+    </section>
+  } @else {
+    <div class="empty-state" role="status">
+      Es wurden keine Detaildaten gefunden.
+    </div>
+  }
+</section>

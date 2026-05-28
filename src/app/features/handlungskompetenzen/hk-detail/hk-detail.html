@@ -1,1 +1,72 @@
-<p>hk-detail works!</p>
+<section class="detail-page">
+  <a class="back-link" routerLink="/handlungskompetenzen">
+    Zurück zu den Handlungskompetenzen
+  </a>
+
+  @if (isLoading()) {
+    <div class="loading-state" role="status">
+      Detaildaten werden geladen...
+    </div>
+  } @else if (error()) {
+    <div class="error-state" role="alert">
+      {{ error() }}
+    </div>
+  } @else if (hk(); as hk) {
+    <article class="detail-card">
+      <header class="detail-header">
+        <p class="eyebrow">Handlungskompetenz</p>
+        <h1>{{ hk.kennung }}</h1>
+        <p>{{ hk.beschreibung }}</p>
+      </header>
+
+      <dl class="meta-grid">
+        <div>
+          <dt>ID</dt>
+          <dd>{{ hk.id }}</dd>
+        </div>
+
+        <div>
+          <dt>HKB-ID</dt>
+          <dd>
+            <a [routerLink]="['/handlungskompetenzbereiche', hk.handlungskompetenzbereichId]">
+              {{ hk.handlungskompetenzbereichId }}
+            </a>
+          </dd>
+        </div>
+
+        <div>
+          <dt>HKB-Kennung</dt>
+          <dd>{{ hk.handlungskompetenzbereichKennung ?? 'Nicht geliefert' }}</dd>
+        </div>
+
+        <div>
+          <dt>Lehrjahr</dt>
+          <dd>{{ hk.lehrjahr ?? 'Nicht angegeben' }}</dd>
+        </div>
+      </dl>
+    </article>
+
+    <section class="relation-section">
+      <h2>Zugehörige Module</h2>
+
+      @if (module().length > 0) {
+        <div class="relation-list">
+          @for (modul of module(); track modul.id) {
+            <a class="relation-card" [routerLink]="['/module', modul.id]">
+              <strong>{{ modul.kennung }}</strong>
+              <p>{{ modul.beschreibung }}</p>
+            </a>
+          }
+        </div>
+      } @else {
+        <div class="empty-state" role="status">
+          Zu dieser Handlungskompetenz wurden keine Module gefunden.
+        </div>
+      }
+    </section>
+  } @else {
+    <div class="empty-state" role="status">
+      Es wurden keine Detaildaten gefunden.
+    </div>
+  }
+</section>

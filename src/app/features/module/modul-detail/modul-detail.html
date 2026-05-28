@@ -1,1 +1,94 @@
-<p>modul-detail works!</p>
+<section class="detail-page">
+  <a class="back-link" routerLink="/">
+    Zurück zur Modulübersicht
+  </a>
+
+  @if (isLoading()) {
+    <div class="loading-state" role="status">
+      Detaildaten werden geladen...
+    </div>
+  } @else if (error()) {
+    <div class="error-state" role="alert">
+      {{ error() }}
+    </div>
+  } @else if (modul(); as modul) {
+    <article class="detail-card">
+      <header class="detail-header">
+        <p class="eyebrow">Modul</p>
+        <h1>{{ modul.kennung }}</h1>
+        <p>{{ modul.beschreibung }}</p>
+      </header>
+
+      <dl class="meta-grid">
+        <div>
+          <dt>ID</dt>
+          <dd>{{ modul.id }}</dd>
+        </div>
+
+        <div>
+          <dt>Lehrjahr</dt>
+          <dd>{{ modul.lehrjahr ?? 'Nicht angegeben' }}</dd>
+        </div>
+
+        <div>
+          <dt>Pflicht</dt>
+          <dd>
+            @if (modul.pflicht === true) {
+              Ja
+            } @else if (modul.pflicht === false) {
+              Nein
+            } @else {
+              Nicht angegeben
+            }
+          </dd>
+        </div>
+
+        <div>
+          <dt>Lernort</dt>
+          <dd>
+            @if (modul.lernortId) {
+              <a [routerLink]="['/lernorte', modul.lernortId]">
+                {{ modul.lernortId }}
+              </a>
+            } @else {
+              Nicht angegeben
+            }
+          </dd>
+        </div>
+
+        <div>
+          <dt>EFZ-ID</dt>
+          <dd>{{ modul.efzId ?? 'Nicht angegeben' }}</dd>
+        </div>
+
+        <div>
+          <dt>Fachrichtungen</dt>
+          <dd>{{ modul.fachrichtungen?.join(', ') || 'Keine Angabe' }}</dd>
+        </div>
+      </dl>
+    </article>
+
+    <section class="relation-section">
+      <h2>Zugehörige Handlungskompetenzen</h2>
+
+      @if (handlungskompetenzen().length > 0) {
+        <div class="relation-list">
+          @for (hk of handlungskompetenzen(); track hk.id) {
+            <a class="relation-card" [routerLink]="['/handlungskompetenzen', hk.id]">
+              <strong>{{ hk.kennung }}</strong>
+              <p>{{ hk.beschreibung }}</p>
+            </a>
+          }
+        </div>
+      } @else {
+        <div class="empty-state" role="status">
+          Zu diesem Modul wurden keine Handlungskompetenzen gefunden.
+        </div>
+      }
+    </section>
+  } @else {
+    <div class="empty-state" role="status">
+      Es wurden keine Detaildaten gefunden.
+    </div>
+  }
+</section>

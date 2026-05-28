@@ -71,38 +71,36 @@ export class ModulOverview {
     return (modul as ModulCard).id ?? 0;
   }
 
-  modulCode(modul: Modul): string {
-    const card = modul as ModulCard;
-
-    return card.kennung ?? card.nummer?.toString() ?? `Modul ${card.id ?? ''}`;
-  }
+ modulCode(modul: Modul): string {
+  return modul.kennung || `Modul ${modul.id}`;
+}
 
   modulTitle(modul: Modul): string {
-    const card = modul as ModulCard;
-
-    return card.titel ?? card.bezeichnung ?? card.name ?? 'Unbenanntes Modul';
+    return modul.kennung || `Modul ${modul.id}`;
   }
 
   modulDescription(modul: Modul): string {
-    const card = modul as ModulCard;
-
-    return card.beschreibung ?? card.kurzbeschreibung ?? 'Keine Beschreibung vorhanden.';
+    return modul.beschreibung || 'Keine Beschreibung vorhanden.';
   }
 
   modulType(modul: Modul): string {
-    const card = modul as ModulCard;
+    if (modul.pflicht === true) {
+      return 'Pflichtmodul';
+    }
 
-    return card.modultyp ?? card.typ ?? 'Pflichtmodul';
+    if (modul.pflicht === false) {
+      return 'Nicht als Pflicht markiert';
+    }
+
+    return 'Modultyp offen';
   }
 
   lehrjahrLabel(modul: Modul): string {
-    const card = modul as ModulCard;
-
-    if (!card.lehrjahr) {
+    if (!modul.lehrjahr) {
       return 'Lehrjahr offen';
     }
 
-    return `${card.lehrjahr}. Lehrjahr`;
+    return `${modul.lehrjahr}. Lehrjahr`;
   }
 
   contextLabel(): string {

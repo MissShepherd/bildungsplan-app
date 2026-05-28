@@ -1,1 +1,58 @@
-<p>lernort-detail works!</p>
+<section class="detail-page">
+  <a class="back-link" routerLink="/">
+    Zurück zur Übersicht
+  </a>
+
+  @if (isLoading()) {
+    <div class="loading-state" role="status">
+      Detaildaten werden geladen...
+    </div>
+  } @else if (error()) {
+    <div class="error-state" role="alert">
+      {{ error() }}
+    </div>
+  } @else if (lernort(); as lernort) {
+    <article class="detail-card">
+      <header class="detail-header">
+        <p class="eyebrow">Lernort</p>
+        <h1>{{ lernort.kennung }}</h1>
+        <p>{{ lernort.beschreibung }}</p>
+      </header>
+
+      <dl class="meta-grid">
+        <div>
+          <dt>ID</dt>
+          <dd>{{ lernort.id }}</dd>
+        </div>
+
+        <div>
+          <dt>Kennung</dt>
+          <dd>{{ lernort.kennung }}</dd>
+        </div>
+      </dl>
+    </article>
+
+    <section class="relation-section">
+      <h2>Module an diesem Lernort</h2>
+
+      @if (module().length > 0) {
+        <div class="relation-list">
+          @for (modul of module(); track modul.id) {
+            <a class="relation-card" [routerLink]="['/module', modul.id]">
+              <strong>{{ modul.kennung }}</strong>
+              <p>{{ modul.beschreibung }}</p>
+            </a>
+          }
+        </div>
+      } @else {
+        <div class="empty-state" role="status">
+          Zu diesem Lernort wurden keine Module gefunden.
+        </div>
+      }
+    </section>
+  } @else {
+    <div class="empty-state" role="status">
+      Es wurden keine Detaildaten gefunden.
+    </div>
+  }
+</section>
