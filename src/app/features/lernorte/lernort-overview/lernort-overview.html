@@ -1,1 +1,79 @@
-<p>lernort-overview works!</p>
+<section class="lernort-page">
+  <div class="sticky-page-header">
+    <header class="page-header">
+      <p class="eyebrow">Lernorte</p>
+      <h1>Lernorte im gewählten Kontext</h1>
+      <p>
+        Die Lernorte werden angezeigt, sobald der Bildungsplan-Kontext vollständig ist.
+        Über einen Lernort können die zugehörigen Module angezeigt werden.
+      </p>
+    </header>
+
+    <section class="search-section" aria-label="Suche nach Lernorten">
+      <div class="search-box">
+        <input
+          type="search"
+          placeholder="Lernort suchen"
+          [value]="searchTerm()"
+          (input)="updateSearchTerm($event)"
+          [disabled]="!state.isContextComplete()"
+        />
+
+        @if (searchTerm()) {
+          <button type="button" (click)="clearSearch()" aria-label="Suche zurücksetzen">
+            ×
+          </button>
+        } @else {
+          <span aria-hidden="true">⌕</span>
+        }
+      </div>
+
+      <div class="active-filters" aria-label="Aktive Filter">
+        <span>Aktiver Kontext:</span>
+
+        @if (state.isContextComplete()) {
+          <strong>{{ contextLabel() }}</strong>
+        } @else {
+          <strong>Kein vollständiger Kontext</strong>
+        }
+      </div>
+    </section>
+  </div>
+
+  @if (!state.isContextComplete()) {
+    <section class="empty-state">
+      <h2>Noch kein vollständiger Kontext</h2>
+      <p>
+        Wähle zuerst ein EFZ aus. Falls für das EFZ Fachrichtungen vorhanden sind,
+        muss zusätzlich eine Fachrichtung gewählt werden.
+      </p>
+    </section>
+  } @else if (visibleLernorte().length === 0) {
+    <section class="empty-state">
+      <h2>Keine Lernorte gefunden</h2>
+      <p>
+        Für den aktuellen Kontext oder den eingegebenen Suchbegriff wurden keine
+        Lernorte gefunden.
+      </p>
+    </section>
+  } @else {
+    <section class="lernort-grid" aria-label="Liste der Lernorte">
+      @for (lernort of visibleLernorte(); track lernortId(lernort)) {
+        <a class="lernort-card" [routerLink]="['/lernorte', lernort.id]">
+          <article>
+            <div class="lernort-content">
+              <span class="lernort-code">{{ lernort.kennung }}</span>
+              <h2>{{ lernort.kennung }}</h2>
+              <p>{{ lernort.beschreibung }}</p>
+            </div>
+
+            <footer class="lernort-tags">
+              <span class="tag tag-primary">{{ contextLabel() }}</span>
+              <span class="tag tag-info">{{ moduleCountLabel(lernort) }}</span>
+            </footer>
+          </article>
+        </a>
+      }
+    </section>
+  }
+</section>

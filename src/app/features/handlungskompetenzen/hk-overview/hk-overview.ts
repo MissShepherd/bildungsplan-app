@@ -92,44 +92,36 @@ export class HkOverview {
     return (hk as HkCard).id ?? 0;
   }
 
-  hkCode(hk: Handlungskompetenz): string {
-    const card = hk as HkCard;
-
-    return card.kennung ?? card.kuerzel ?? card.code ?? `HK ${card.id ?? ''}`;
+    hkCode(hk: Handlungskompetenz): string {
+    return hk.kennung || `HK ${hk.id}`;
   }
 
   hkTitle(hk: Handlungskompetenz): string {
-    const card = hk as HkCard;
-
-    return card.titel ?? card.bezeichnung ?? card.name ?? 'Unbenannte Handlungskompetenz';
+    return hk.kennung || `HK ${hk.id}`;
   }
 
   hkDescription(hk: Handlungskompetenz): string {
-    const card = hk as HkCard;
-
-    return card.beschreibung ?? card.kurzbeschreibung ?? 'Keine Beschreibung vorhanden.';
+    return hk.beschreibung || 'Keine Beschreibung vorhanden.';
   }
 
   hkbLabel(hk: Handlungskompetenz): string {
-    const card = hk as HkCard;
-    const hkbId =
-      card.handlungskompetenzbereichId ?? card.hkbId ?? card.bereichId;
-
-    if (!hkbId) {
-      return 'HKB offen';
+    if (hk.handlungskompetenzbereichKennung) {
+      return `HKB ${hk.handlungskompetenzbereichKennung}`;
     }
 
-    return `HKB ${hkbId}`;
+    if (hk.handlungskompetenzbereichId) {
+      return `HKB ${hk.handlungskompetenzbereichId}`;
+    }
+
+    return 'HKB offen';
   }
 
   lehrjahrLabel(hk: Handlungskompetenz): string {
-    const card = hk as HkCard;
-
-    if (!card.lehrjahr) {
+    if (!hk.lehrjahr) {
       return 'Lehrjahr offen';
     }
 
-    return `${card.lehrjahr}. Lehrjahr`;
+    return `${hk.lehrjahr}. Lehrjahr`;
   }
 
   moduleCount(hk: Handlungskompetenz): number {
