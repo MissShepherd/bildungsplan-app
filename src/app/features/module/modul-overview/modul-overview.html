@@ -1,1 +1,104 @@
-<p>modul-overview works!</p>
+<section class="module-page">
+  <header class="page-header">
+    <p class="eyebrow">Module</p>
+    <h1>Module im gewählten Bildungsplan-Kontext</h1>
+    <p>
+      Die Module werden erst angezeigt, wenn ein EFZ und falls nötig eine Fachrichtung
+      ausgewählt wurden. Zusätzlich kann ein Lernort gewählt werden, um die Anzeige
+      weiter einzugrenzen.
+    </p>
+  </header>
+
+  <section class="search-section" aria-label="Suche nach Modulen">
+    <div class="search-box">
+      <input
+        type="search"
+        placeholder="Value"
+        [value]="searchTerm()"
+        (input)="updateSearchTerm($event)"
+        [disabled]="!state.isContextComplete() || !state.selectedLernort()"
+      />
+
+      @if (searchTerm()) {
+        <button type="button" (click)="clearSearch()" aria-label="Suche zurücksetzen">
+          ×
+        </button>
+      } @else {
+        <span aria-hidden="true">⌕</span>
+      }
+    </div>
+
+    <div class="active-filters" aria-label="Aktive Filter">
+      <span>Active filters:</span>
+
+      @if (state.isContextComplete()) {
+        <strong>{{ contextLabel() }}</strong>
+      } @else {
+        <strong>Kein vollständiger Kontext</strong>
+      }
+
+      @if (state.selectedLernort()) {
+        <strong>Lernort gewählt</strong>
+      }
+    </div>
+  </section>
+
+  @if (!state.isContextComplete()) {
+    <section class="empty-state">
+      <h2>Noch kein vollständiger Kontext</h2>
+      <p>
+        Wähle zuerst ein EFZ aus. Falls für das EFZ Fachrichtungen vorhanden sind,
+        muss zusätzlich eine Fachrichtung gewählt werden.
+      </p>
+    </section>
+  } @else if (!state.selectedLernort()) {
+    <section class="empty-state">
+      <h2>Noch kein Lernort ausgewählt</h2>
+      <p>
+        Wähle links in der Filterleiste einen Lernort aus, damit die passenden Module
+        angezeigt werden können.
+      </p>
+    </section>
+  } @else if (visibleFilteredModule().length === 0) {
+    <section class="empty-state">
+      <h2>Keine Module gefunden</h2>
+      <p>
+        Für den aktuellen Kontext, den gewählten Lernort oder den eingegebenen
+        Suchbegriff wurden keine Module gefunden.
+      </p>
+    </section>
+  } @else {
+    <section class="result-summary" aria-label="Aktueller Modul-Kontext">
+      <div>
+        <span class="summary-label">Aktueller Kontext</span>
+        <strong>{{ contextLabel() }}</strong>
+      </div>
+
+      <div>
+        <span class="summary-label">Anzahl Module</span>
+        <strong>{{ visibleFilteredModule().length }}</strong>
+      </div>
+    </section>
+
+    <section class="module-grid" aria-label="Modulliste">
+      @for (modul of visibleFilteredModule(); track modulId(modul)) {
+        <a class="module-card" [routerLink]="['/module', modulId(modul)]">
+          <article>
+            <div class="module-content">
+              <span class="module-code">{{ modulCode(modul) }}</span>
+              <h2>{{ modulTitle(modul) }}</h2>
+              <p>{{ modulDescription(modul) }}</p>
+            </div>
+
+            <footer class="module-tags">
+              <span class="tag tag-primary">{{ contextLabel() }}</span>
+              <span class="tag tag-success">Training/ÜK</span>
+              <span class="tag tag-info">{{ lehrjahrLabel(modul) }}</span>
+              <span class="tag tag-warning">{{ modulType(modul) }}</span>
+            </footer>
+          </article>
+        </a>
+      }
+    </section>
+  }
+</section>

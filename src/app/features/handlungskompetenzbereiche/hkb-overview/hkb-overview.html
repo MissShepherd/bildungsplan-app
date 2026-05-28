@@ -1,1 +1,80 @@
-<p>hkb-overview works!</p>
+<section class="hkb-page">
+  <header class="page-header">
+    <p class="eyebrow">Handlungskompetenzbereiche</p>
+    <h1>Handlungskompetenzbereiche im gewählten Kontext</h1>
+    <p>
+      Die Handlungskompetenzbereiche werden passend zum ausgewählten EFZ und
+      falls vorhanden zur gewählten Fachrichtung angezeigt.
+    </p>
+  </header>
+
+  <section class="search-section" aria-label="Suche nach Handlungskompetenzbereichen">
+    <div class="search-box">
+      <input
+        type="search"
+        placeholder="Value"
+        [value]="searchTerm()"
+        (input)="updateSearchTerm($event)"
+        [disabled]="!state.isContextComplete()"
+      />
+
+      @if (searchTerm()) {
+        <button type="button" (click)="clearSearch()" aria-label="Suche zurücksetzen">
+          ×
+        </button>
+      } @else {
+        <span aria-hidden="true">⌕</span>
+      }
+    </div>
+
+    <div class="active-filters" aria-label="Aktive Filter">
+      <span>Active filters:</span>
+
+      @if (state.isContextComplete()) {
+        <strong>{{ contextLabel() }}</strong>
+      } @else {
+        <strong>Kein vollständiger Kontext</strong>
+      }
+    </div>
+  </section>
+
+  @if (!state.isContextComplete()) {
+    <section class="empty-state">
+      <h2>Noch kein vollständiger Kontext</h2>
+      <p>
+        Wähle zuerst ein EFZ aus. Falls für das EFZ Fachrichtungen vorhanden sind,
+        muss zusätzlich eine Fachrichtung gewählt werden.
+      </p>
+    </section>
+  } @else if (visibleHandlungskompetenzbereiche().length === 0) {
+    <section class="empty-state">
+      <h2>Keine Handlungskompetenzbereiche gefunden</h2>
+      <p>
+        Für den aktuellen Kontext oder den eingegebenen Suchbegriff wurden keine
+        Handlungskompetenzbereiche gefunden.
+      </p>
+    </section>
+  } @else {
+    <section class="hkb-grid" aria-label="Liste der Handlungskompetenzbereiche">
+      @for (hkb of visibleHandlungskompetenzbereiche(); track hkbId(hkb)) {
+        <a
+          class="hkb-card"
+          [routerLink]="['/handlungskompetenzbereiche', hkbId(hkb)]"
+        >
+          <article>
+            <div class="hkb-content">
+              <span class="hkb-code">{{ hkbCode(hkb) }}</span>
+              <h2>{{ hkbTitle(hkb) }}</h2>
+              <p>{{ hkbDescription(hkb) }}</p>
+            </div>
+
+            <footer class="hkb-tags">
+              <span class="tag tag-primary">{{ contextLabel() }}</span>
+              <span class="tag tag-soft">{{ handlungskompetenzCountLabel(hkb) }}</span>
+            </footer>
+          </article>
+        </a>
+      }
+    </section>
+  }
+</section>

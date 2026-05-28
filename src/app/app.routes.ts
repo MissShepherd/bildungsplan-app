@@ -1,45 +1,57 @@
 import { Routes } from '@angular/router';
 
-import { EfzPage } from './features/efz/efz-page/efz-page';
-import { SearchPage } from './features/search/search-page/search-page';
-import { LernortDetail } from './features/lernorte/lernort-detail/lernort-detail';
+import { ModulOverview } from './features/module/modul-overview/modul-overview';
+import { HkbOverview } from './features/handlungskompetenzbereiche/hkb-overview/hkb-overview';
 import { HkbDetail } from './features/handlungskompetenzbereiche/hkb-detail/hkb-detail';
+import { HkOverview } from './features/handlungskompetenzen/hk-overview/hk-overview';
 import { HkDetail } from './features/handlungskompetenzen/hk-detail/hk-detail';
+import { LernortDetail } from './features/lernorte/lernort-detail/lernort-detail';
 import { ModulDetail } from './features/module/modul-detail/modul-detail';
+import { SearchPage } from './features/search/search-page/search-page';
 
 export const routes: Routes = [
   {
     path: '',
-    component: EfzPage,
-    title: 'Bildungsplan - EFZ-Auswahl'
+    component: ModulOverview,
+    title: 'Bildungsplan - Module',
   },
   {
-    path: 'suche',
-    component: SearchPage,
-    title: 'Bildungsplan - Suche'
-  },
-  {
-    path: 'lernorte/:id',
-    component: LernortDetail,
-    title: 'Lernort'
+    path: 'handlungskompetenzbereiche',
+    component: HkbOverview,
+    title: 'Bildungsplan - Handlungskompetenzbereiche',
   },
   {
     path: 'handlungskompetenzbereiche/:id',
     component: HkbDetail,
-    title: 'Handlungskompetenzbereich'
+    title: 'Handlungskompetenzbereich',
+  },
+  {
+    path: 'handlungskompetenzen',
+    component: HkOverview,
+    title: 'Bildungsplan - Handlungskompetenzen',
   },
   {
     path: 'handlungskompetenzen/:id',
     component: HkDetail,
-    title: 'Handlungskompetenz'
+    title: 'Handlungskompetenz',
   },
   {
     path: 'module/:id',
     component: ModulDetail,
-    title: 'Modul'
+    title: 'Modul',
+  },
+  {
+    path: 'lernorte/:id',
+    component: LernortDetail,
+    title: 'Lernort',
+  },
+  {
+    path: 'suche',
+    component: SearchPage,
+    title: 'Bildungsplan - Suche',
   },
   {
     path: '**',
-    redirectTo: ''
-  }
+    redirectTo: '',
+  },
 ];
