@@ -83,30 +83,19 @@ export class BildungsplanStateService {
     return `${efz.titel} / ${fachrichtung.titel}`;
   });
 
-  readonly visibleLernorte = computed(() => {
-    const usedLernortIds = new Set(
-      this.module()
-        .map((modul) => modul.lernortId)
-        .filter(
-          (lernortId): lernortId is number =>
-            lernortId !== undefined && lernortId !== null
-        )
-    );
+    readonly visibleLernorte = computed(() => this.lernorte());
 
-    return this.lernorte().filter((lernort) => usedLernortIds.has(lernort.id));
-  });
+    readonly visibleModule = computed(() => {
+      const selectedLernortId = this.selectedLernortId();
 
-  readonly visibleModule = computed(() => {
-    const selectedLernortId = this.selectedLernortId();
+      if (selectedLernortId === null) {
+        return this.module();
+      }
 
-    if (!selectedLernortId) {
-      return [];
-    }
-
-    return this.module().filter(
-      (modul) => modul.lernortId === selectedLernortId
-    );
-  });
+      return this.module().filter(
+        (modul) => modul.lernortId === selectedLernortId
+      );
+    });
 
   readonly hasContextData = computed(
     () =>
