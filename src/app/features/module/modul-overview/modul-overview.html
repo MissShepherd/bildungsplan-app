@@ -4,8 +4,8 @@
       <p class="eyebrow">Module</p>
       <h1>Module im gewählten Bildungsplan-Kontext</h1>
       <p>
-        Die Module werden erst angezeigt, wenn ein EFZ und falls nötig eine Fachrichtung
-        ausgewählt wurden. Zusätzlich kann ein Lernort gewählt werden, um die Anzeige
+        Die Module werden angezeigt, sobald ein EFZ und falls nötig eine Fachrichtung
+        ausgewählt wurden. Ein Lernort kann optional gewählt werden, um die Anzeige
         weiter einzugrenzen.
       </p>
     </header>
@@ -17,7 +17,7 @@
           placeholder="Modul suchen"
           [value]="searchTerm()"
           (input)="updateSearchTerm($event)"
-          [disabled]="!state.isContextComplete() || !state.selectedLernort()"
+          [disabled]="!state.isContextComplete()"
         />
 
         @if (searchTerm()) {
@@ -30,16 +30,13 @@
       </div>
 
       <div class="active-filters" aria-label="Aktive Filter">
-        <span>Active filters:</span>
+        <span>Aktive Filter:</span>
 
         @if (state.isContextComplete()) {
           <strong>{{ contextLabel() }}</strong>
+          <strong>{{ selectedLernortLabel() }}</strong>
         } @else {
           <strong>Kein vollständiger Kontext</strong>
-        }
-
-        @if (state.selectedLernort()) {
-          <strong>Lernort gewählt</strong>
         }
       </div>
     </section>
@@ -51,14 +48,6 @@
       <p>
         Wähle zuerst ein EFZ aus. Falls für das EFZ Fachrichtungen vorhanden sind,
         muss zusätzlich eine Fachrichtung gewählt werden.
-      </p>
-    </section>
-  } @else if (!state.selectedLernort()) {
-    <section class="empty-state">
-      <h2>Noch kein Lernort ausgewählt</h2>
-      <p>
-        Wähle links in der Filterleiste einen Lernort aus, damit die passenden Module
-        angezeigt werden können.
       </p>
     </section>
   } @else if (visibleFilteredModule().length === 0) {
@@ -74,6 +63,11 @@
       <div>
         <span class="summary-label">Aktueller Kontext</span>
         <strong>{{ contextLabel() }}</strong>
+      </div>
+
+      <div>
+        <span class="summary-label">Lernortfilter</span>
+        <strong>{{ selectedLernortLabel() }}</strong>
       </div>
 
       <div>
@@ -94,7 +88,7 @@
 
             <footer class="module-tags">
               <span class="tag tag-primary">{{ contextLabel() }}</span>
-              <span class="tag tag-success">Training/ÜK</span>
+              <span class="tag tag-success">{{ lernortLabel(modul) }}</span>
               <span class="tag tag-info">{{ lehrjahrLabel(modul) }}</span>
               <span class="tag tag-warning">{{ modulType(modul) }}</span>
             </footer>

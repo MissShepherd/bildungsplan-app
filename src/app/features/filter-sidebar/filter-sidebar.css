@@ -192,3 +192,21 @@
 .status-text.blocked {
   color: #374151;
 }
+
+.optional-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 18px;
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #374151;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.filter-group .filter-hint {
+  margin-bottom: 10px;
+}

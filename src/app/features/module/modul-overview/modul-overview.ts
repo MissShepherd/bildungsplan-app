@@ -21,7 +21,7 @@ type ModulCard = Modul &
       string
     >
   > &
-  Partial<Record<'id' | 'lehrjahr', number>>;
+  Partial<Record<'id' | 'lehrjahr' | 'lernortId', number>>;
 
 @Component({
   selector: 'app-modul-overview',
@@ -35,9 +35,20 @@ export class ModulOverview {
 
   readonly searchTerm = signal('');
 
+  readonly moduleForCurrentSelection = computed(() => {
+    const selectedLernortId = this.state.selectedLernortId();
+    const items = this.state.module();
+
+    if (selectedLernortId === null) {
+      return items;
+    }
+
+    return items.filter((modul) => modul.lernortId === selectedLernortId);
+  });
+
   readonly visibleFilteredModule = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
-    const items = this.state.visibleModule();
+    const items = this.moduleForCurrentSelection();
 
     if (!term) {
       return items;
@@ -50,6 +61,7 @@ export class ModulOverview {
         this.modulDescription(modul),
         this.modulType(modul),
         this.lehrjahrLabel(modul),
+        this.lernortLabel(modul),
       ]
         .join(' ')
         .toLowerCase();
@@ -71,9 +83,9 @@ export class ModulOverview {
     return (modul as ModulCard).id ?? 0;
   }
 
- modulCode(modul: Modul): string {
-  return modul.kennung || `Modul ${modul.id}`;
-}
+  modulCode(modul: Modul): string {
+    return modul.kennung || `Modul ${modul.id}`;
+  }
 
   modulTitle(modul: Modul): string {
     return modul.kennung || `Modul ${modul.id}`;
@@ -101,6 +113,36 @@ export class ModulOverview {
     }
 
     return `${modul.lehrjahr}. Lehrjahr`;
+  }
+
+  lernortLabel(modul: Modul): string {
+    const lernort = this.state.lernorte().find(
+      (item) => item.id === modul.lernortId
+    );
+
+    if (lernort) {
+      return lernort.beschreibung || lernort.kennung || `Lernort ${lernort.id}`;
+    }
+
+    if (modul.lernortId) {
+      return `Lernort ${modul.lernortId}`;
+    }
+
+    return 'Lernort offen';
+  }
+
+  selectedLernortLabel(): string {
+    const selectedLernort = this.state.selectedLernort();
+
+    if (!selectedLernort) {
+      return 'Alle Lernorte';
+    }
+
+    return (
+      selectedLernort.beschreibung ||
+      selectedLernort.kennung ||
+      `Lernort ${selectedLernort.id}`
+    );
   }
 
   contextLabel(): string {

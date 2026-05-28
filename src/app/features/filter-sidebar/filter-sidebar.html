@@ -102,19 +102,33 @@
     </section>
 
     <section class="filter-group">
-      <h3>Modultyp</h3>
+      <h3>
+        Lernort
+        <span class="optional-label">optional</span>
+      </h3>
 
-      @for (modultyp of modultypOptions; track modultyp) {
-        <label class="filter-option">
-          <input type="checkbox" />
-          <span>{{ modultyp }}</span>
-        </label>
+      <p class="filter-hint">
+        Ohne Lernortauswahl werden alle Module im aktuellen Kontext angezeigt.
+        Die Auswahl eines Lernorts grenzt die Modulliste ein.
+      </p>
+
+      @if (state.lernorte().length > 0) {
+        @for (lernort of state.lernorte(); track lernort.id) {
+          <label class="filter-option">
+            <input
+              type="checkbox"
+              [checked]="state.selectedLernortId() === lernort.id"
+              (change)="state.selectLernort(state.selectedLernortId() === lernort.id ? null : lernort)"
+            />
+
+            <span>{{ lernort.beschreibung || lernort.kennung }}</span>
+          </label>
+        }
+      } @else {
+        <p class="filter-hint">
+          Es wurden keine Lernorte für den aktuellen Kontext gefunden.
+        </p>
       }
     </section>
-
-    <section class="filter-group">
-      <h3>Status</h3>
-      <p class="status-text ready">Kontext vollständig</p>
-    </section>
-  }
+      }
 </aside>
