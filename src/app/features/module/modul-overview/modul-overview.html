@@ -9,6 +9,40 @@
     </p>
   </header>
 
+  <section class="search-section" aria-label="Suche nach Modulen">
+    <div class="search-box">
+      <input
+        type="search"
+        placeholder="Value"
+        [value]="searchTerm()"
+        (input)="updateSearchTerm($event)"
+        [disabled]="!state.isContextComplete() || !state.selectedLernort()"
+      />
+
+      @if (searchTerm()) {
+        <button type="button" (click)="clearSearch()" aria-label="Suche zurücksetzen">
+          ×
+        </button>
+      } @else {
+        <span aria-hidden="true">⌕</span>
+      }
+    </div>
+
+    <div class="active-filters" aria-label="Aktive Filter">
+      <span>Active filters:</span>
+
+      @if (state.isContextComplete()) {
+        <strong>{{ contextLabel() }}</strong>
+      } @else {
+        <strong>Kein vollständiger Kontext</strong>
+      }
+
+      @if (state.selectedLernort()) {
+        <strong>Lernort gewählt</strong>
+      }
+    </div>
+  </section>
+
   @if (!state.isContextComplete()) {
     <section class="empty-state">
       <h2>Noch kein vollständiger Kontext</h2>
@@ -25,12 +59,12 @@
         angezeigt werden können.
       </p>
     </section>
-  } @else if (state.visibleModule().length === 0) {
+  } @else if (visibleFilteredModule().length === 0) {
     <section class="empty-state">
       <h2>Keine Module gefunden</h2>
       <p>
-        Für den aktuellen Kontext sind keine Module vorhanden oder die gewählten Filter
-        liefern keine Treffer.
+        Für den aktuellen Kontext, den gewählten Lernort oder den eingegebenen
+        Suchbegriff wurden keine Module gefunden.
       </p>
     </section>
   } @else {
@@ -42,12 +76,12 @@
 
       <div>
         <span class="summary-label">Anzahl Module</span>
-        <strong>{{ state.visibleModule().length }}</strong>
+        <strong>{{ visibleFilteredModule().length }}</strong>
       </div>
     </section>
 
     <section class="module-grid" aria-label="Modulliste">
-      @for (modul of state.visibleModule(); track modulId(modul)) {
+      @for (modul of visibleFilteredModule(); track modulId(modul)) {
         <a class="module-card" [routerLink]="['/module', modulId(modul)]">
           <article>
             <div class="module-content">

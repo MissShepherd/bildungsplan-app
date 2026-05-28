@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { BildungsplanStateService } from '../../../core/state/bildungsplan-state.service';
@@ -32,6 +32,40 @@ type ModulCard = Modul &
 })
 export class ModulOverview {
   readonly state = inject(BildungsplanStateService);
+
+  readonly searchTerm = signal('');
+
+  readonly visibleFilteredModule = computed(() => {
+    const term = this.searchTerm().trim().toLowerCase();
+    const items = this.state.visibleModule();
+
+    if (!term) {
+      return items;
+    }
+
+    return items.filter((modul) => {
+      const searchableText = [
+        this.modulCode(modul),
+        this.modulTitle(modul),
+        this.modulDescription(modul),
+        this.modulType(modul),
+        this.lehrjahrLabel(modul),
+      ]
+        .join(' ')
+        .toLowerCase();
+
+      return searchableText.includes(term);
+    });
+  });
+
+  updateSearchTerm(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.searchTerm.set(input.value);
+  }
+
+  clearSearch(): void {
+    this.searchTerm.set('');
+  }
 
   modulId(modul: Modul): number {
     return (modul as ModulCard).id ?? 0;
