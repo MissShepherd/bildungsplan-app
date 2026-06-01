@@ -186,9 +186,24 @@
 
 .hkb-tags {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 7px;
   margin-top: 18px;
+}
+
+.tag-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.tag-row-context {
+  min-height: 23px;
+}
+
+.tag-row-meta {
+  min-height: 23px;
 }
 
 .tag {
@@ -206,6 +221,11 @@
 .tag-primary {
   background: #4b377f;
   color: #ffffff;
+}
+
+.tag-soft {
+  background: #eadcff;
+  color: #5c3d8b;
 }
 
 .tag-info {

@@ -155,6 +155,16 @@ export class HkbOverview {
     return label;
   }
 
+  fachrichtungShortLabel(): string | null {
+  const fachrichtung = this.state.selectedFachrichtung();
+
+  if (!fachrichtung) {
+    return null;
+  }
+
+  return fachrichtung.titel || `Fachrichtung ${fachrichtung.id}`;
+}
+
   private removeLeadingCode(value: string, code: string): string {
     const trimmed = value.trim();
     const lowerValue = trimmed.toLowerCase();

@@ -71,8 +71,17 @@
             </div>
 
             <footer class="hkb-tags">
-              <span class="tag tag-primary">{{ contextShortLabel() }}</span>
-              <span class="tag tag-info">{{ handlungskompetenzCountLabel(hkb) }}</span>
+              <div class="tag-row tag-row-context">
+                <span class="tag tag-primary">{{ contextShortLabel() }}</span>
+              </div>
+
+              <div class="tag-row tag-row-meta">
+                @if (fachrichtungShortLabel()) {
+                  <span class="tag tag-soft">{{ fachrichtungShortLabel() }}</span>
+                }
+
+                <span class="tag tag-info">{{ handlungskompetenzCountLabel(hkb) }}</span>
+              </div>
             </footer>
           </article>
         </a>
