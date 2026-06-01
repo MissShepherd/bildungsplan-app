@@ -1,0 +1,70 @@
+.active-filter-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #4b5563;
+  font-size: 12px;
+}
+
+.active-filter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.active-filter-header span {
+  font-weight: 700;
+}
+
+.active-filter-clear {
+  border: 0;
+  background: transparent;
+  color: #374151;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.active-filter-clear:hover {
+  color: #111827;
+  text-decoration: underline;
+}
+
+.active-filter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.active-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  min-height: 24px;
+  padding: 4px 10px;
+  border: 0;
+  border-radius: 999px;
+  background: #d1d5db;
+  color: #374151;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.active-filter-chip:hover {
+  background: #c2c8d0;
+  color: #111827;
+}
+
+.active-filter-chip span:first-child {
+  overflow-wrap: anywhere;
+}
+
+.active-filter-empty {
+  margin: 0;
+  color: #6b7280;
+  font-size: 12px;
+}
