@@ -7,10 +7,12 @@ import { BildungsplanStateService } from '../../core/state/bildungsplan-state.se
 import { Efz } from '../../models/efz.model';
 import { Fachrichtung } from '../../models/fachrichtung.model';
 import { Lernort } from '../../models/lernort.model';
+import { ActiveFilterChipsComponent } from '../../shared/components/active-filter-chips/active-filter-chips';
 
 @Component({
   selector: 'app-filter-sidebar',
   standalone: true,
+  imports: [ActiveFilterChipsComponent],
   templateUrl: './filter-sidebar.html',
   styleUrl: './filter-sidebar.css',
 })
