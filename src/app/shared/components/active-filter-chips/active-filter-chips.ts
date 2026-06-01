@@ -66,10 +66,4 @@ export class ActiveFilterChipsComponent {
 
     return chips;
   });
-
-  readonly hasChips = computed(() => this.chips().length > 0);
-
-  clearAll(): void {
-    this.state.clearAll();
-  }
 }

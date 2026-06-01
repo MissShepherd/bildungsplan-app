@@ -1,33 +1,17 @@
 <section class="active-filter-box" aria-label="Aktive Filter">
-  <div class="active-filter-header">
-    <span>Aktive Filter</span>
+  <div class="active-filter-title">Aktive Filter</div>
 
-    @if (hasChips()) {
+  <div class="active-filter-list">
+    @for (chip of chips(); track chip.id) {
       <button
         type="button"
-        class="active-filter-clear"
-        (click)="clearAll()"
+        class="active-filter-chip"
+        (click)="chip.remove()"
+        [attr.aria-label]="'Filter entfernen: ' + chip.label"
       >
-        Alle entfernen
+        <span>{{ chip.label }}</span>
+        <span aria-hidden="true">×</span>
       </button>
     }
   </div>
-
-  @if (hasChips()) {
-    <div class="active-filter-list">
-      @for (chip of chips(); track chip.id) {
-        <button
-          type="button"
-          class="active-filter-chip"
-          (click)="chip.remove()"
-          [attr.aria-label]="'Filter entfernen: ' + chip.label"
-        >
-          <span>{{ chip.label }}</span>
-          <span aria-hidden="true">×</span>
-        </button>
-      }
-    </div>
-  } @else {
-    <p class="active-filter-empty">Keine aktiven Filter gesetzt.</p>
-  }
 </section>
