@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { BildungsplanStateService } from '../../../core/state/bildungsplan-state.service';
 import { Handlungskompetenz } from '../../../models/handlungskompetenz.model';
 import { Modul } from '../../../models/modul.model';
+import { ActiveFilterChipsComponent } from '../../../shared/components/active-filter-chips/active-filter-chips';
 
 type HkCard = Handlungskompetenz &
   Partial<
@@ -49,7 +50,7 @@ type ModulReference = Modul &
 @Component({
   selector: 'app-hk-overview',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ActiveFilterChipsComponent],
   templateUrl: './hk-overview.html',
   styleUrl: './hk-overview.css',
 })

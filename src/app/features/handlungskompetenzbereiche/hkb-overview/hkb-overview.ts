@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 
 import { BildungsplanStateService } from '../../../core/state/bildungsplan-state.service';
 import { Handlungskompetenzbereich } from '../../../models/handlungskompetenzbereich.model';
+import { ActiveFilterChipsComponent } from '../../../shared/components/active-filter-chips/active-filter-chips';
 
 type HkbCard = Handlungskompetenzbereich &
   Partial<
@@ -27,7 +28,7 @@ type HkReference = Partial<
 @Component({
   selector: 'app-hkb-overview',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ActiveFilterChipsComponent],
   templateUrl: './hkb-overview.html',
   styleUrl: './hkb-overview.css',
 })
