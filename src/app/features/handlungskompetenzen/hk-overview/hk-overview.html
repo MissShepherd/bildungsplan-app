@@ -71,10 +71,15 @@
             </div>
 
             <footer class="hk-tags">
-              <span class="tag tag-primary">{{ contextShortLabel() }}</span>
-              <span class="tag tag-warning">{{ hkbLabel(hk) }}</span>
-              <span class="tag tag-soft">{{ lehrjahrLabel(hk) }}</span>
-              <span class="tag tag-info">{{ moduleCountLabel(hk) }}</span>
+              <div class="tag-row tag-row-context">
+                <span class="tag tag-primary">{{ contextShortLabel() }}</span>
+              </div>
+
+              <div class="tag-row tag-row-meta">
+                <span class="tag tag-warning">{{ hkbLabel(hk) }}</span>
+                <span class="tag tag-soft">{{ lehrjahrLabel(hk) }}</span>
+                <span class="tag tag-info">{{ moduleCountLabel(hk) }}</span>
+              </div>
             </footer>
           </article>
         </a>

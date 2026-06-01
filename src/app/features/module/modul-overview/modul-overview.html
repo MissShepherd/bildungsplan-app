@@ -89,10 +89,15 @@
             </div>
 
             <footer class="module-tags">
-              <span class="tag tag-primary">{{ contextShortLabel() }}</span>
-              <span class="tag tag-success">{{ lernortLabel(modul) }}</span>
-              <span class="tag tag-info">{{ lehrjahrLabel(modul) }}</span>
-              <span class="tag tag-warning">{{ modulType(modul) }}</span>
+              <div class="tag-row tag-row-context">
+                <span class="tag tag-primary">{{ contextShortLabel() }}</span>
+              </div>
+
+              <div class="tag-row tag-row-meta">
+                <span class="tag tag-success">{{ lernortLabel(modul) }}</span>
+                <span class="tag tag-info">{{ lehrjahrLabel(modul) }}</span>
+                <span class="tag tag-warning">{{ modulType(modul) }}</span>
+              </div>
             </footer>
           </article>
         </a>

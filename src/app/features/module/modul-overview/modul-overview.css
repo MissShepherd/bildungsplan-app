@@ -165,9 +165,24 @@
 
 .module-tags {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 7px;
   margin-top: 18px;
+}
+
+.tag-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.tag-row-context {
+  min-height: 23px;
+}
+
+.tag-row-meta {
+  min-height: 23px;
 }
 
 .tag {
