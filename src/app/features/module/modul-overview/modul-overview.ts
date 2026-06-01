@@ -82,6 +82,7 @@ export class ModulOverview {
       return searchableText.includes(term);
     });
   });
+
   updateSearchTerm(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchTerm.set(input.value);
@@ -96,28 +97,49 @@ export class ModulOverview {
   }
 
   modulCode(modul: Modul): string {
-    return modul.kennung || `Modul ${modul.id}`;
+    const card = modul as ModulCard;
+
+    return String(card.kennung || card.nummer || modul.id || 'Modul');
   }
 
   modulTitle(modul: Modul): string {
-    return modul.kennung || `Modul ${modul.id}`;
+    const card = modul as ModulCard;
+    const code = this.modulCode(modul);
+
+    const title =
+      card.titel ||
+      card.bezeichnung ||
+      card.name ||
+      card.kurzbeschreibung ||
+      card.beschreibung ||
+      `Modul ${code}`;
+
+    return this.removeLeadingCode(title, code);
   }
 
   modulDescription(modul: Modul): string {
-    return modul.beschreibung || 'Keine Beschreibung vorhanden.';
+    const card = modul as ModulCard;
+    const description = card.beschreibung || card.kurzbeschreibung || '';
+    const title = this.modulTitle(modul);
+
+    if (!description || this.normalise(description) === this.normalise(title)) {
+      return '';
+    }
+
+    return this.removeLeadingCode(description, this.modulCode(modul));
   }
 
-modulType(modul: Modul): string {
-  if (modul.pflicht === true) {
-    return 'Pflichtmodul';
-  }
+  modulType(modul: Modul): string {
+    if (modul.pflicht === true) {
+      return 'Pflichtmodul';
+    }
 
-  if (modul.pflicht === false) {
-    return 'Wahlmodul';
-  }
+    if (modul.pflicht === false) {
+      return 'Wahlmodul';
+    }
 
-  return 'Modultyp offen';
-}
+    return 'Modultyp offen';
+  }
 
   lehrjahrLabel(modul: Modul): string {
     if (!modul.lehrjahr) {
@@ -159,5 +181,39 @@ modulType(modul: Modul): string {
 
   contextLabel(): string {
     return this.state.contextLabel();
+  }
+
+  contextShortLabel(): string {
+    const label = this.state.contextLabel();
+
+    if (label.toLowerCase().includes('informatiker')) {
+      return 'Informatiker/in EFZ';
+    }
+
+    if (label.length > 32) {
+      return `${label.slice(0, 29)}...`;
+    }
+
+    return label;
+  }
+
+  private removeLeadingCode(value: string, code: string): string {
+    const trimmed = value.trim();
+    const lowerValue = trimmed.toLowerCase();
+    const lowerCode = code.toLowerCase();
+
+    if (lowerValue.startsWith(`${lowerCode} `)) {
+      return trimmed.slice(code.length).trim();
+    }
+
+    if (lowerValue.startsWith(`modul ${lowerCode} `)) {
+      return trimmed.slice(`Modul ${code}`.length).trim();
+    }
+
+    return trimmed;
+  }
+
+  private normalise(value: string): string {
+    return value.trim().toLowerCase().replace(/\s+/g, ' ');
   }
 }

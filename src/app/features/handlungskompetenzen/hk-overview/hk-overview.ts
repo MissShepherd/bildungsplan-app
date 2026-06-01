@@ -32,20 +32,8 @@ type HkCard = Handlungskompetenz &
   >;
 
 type ModulReference = Modul &
-  Partial<
-    Record<
-      | 'handlungskompetenzId'
-      | 'hkId',
-      number
-    >
-  > &
-  Partial<
-    Record<
-      | 'handlungskompetenzIds'
-      | 'hkIds',
-      number[]
-    >
-  >;
+  Partial<Record<'handlungskompetenzId' | 'hkId', number>> &
+  Partial<Record<'handlungskompetenzIds' | 'hkIds', number[]>>;
 
 @Component({
   selector: 'app-hk-overview',
@@ -72,6 +60,8 @@ export class HkOverview {
         this.hkCode(hk),
         this.hkTitle(hk),
         this.hkDescription(hk),
+        this.hkbLabel(hk),
+        this.lehrjahrLabel(hk),
       ]
         .join(' ')
         .toLowerCase();
@@ -93,16 +83,37 @@ export class HkOverview {
     return (hk as HkCard).id ?? 0;
   }
 
-    hkCode(hk: Handlungskompetenz): string {
-    return hk.kennung || `HK ${hk.id}`;
+  hkCode(hk: Handlungskompetenz): string {
+    const card = hk as HkCard;
+
+    return card.kennung || card.kuerzel || card.code || `HK ${hk.id}`;
   }
 
   hkTitle(hk: Handlungskompetenz): string {
-    return hk.kennung || `HK ${hk.id}`;
+    const card = hk as HkCard;
+    const code = this.hkCode(hk);
+
+    const title =
+      card.titel ||
+      card.bezeichnung ||
+      card.name ||
+      card.kurzbeschreibung ||
+      card.beschreibung ||
+      `Handlungskompetenz ${code}`;
+
+    return this.removeLeadingCode(title, code);
   }
 
   hkDescription(hk: Handlungskompetenz): string {
-    return hk.beschreibung || 'Keine Beschreibung vorhanden.';
+    const card = hk as HkCard;
+    const description = card.beschreibung || card.kurzbeschreibung || '';
+    const title = this.hkTitle(hk);
+
+    if (!description || this.normalise(description) === this.normalise(title)) {
+      return '';
+    }
+
+    return this.removeLeadingCode(description, this.hkCode(hk));
   }
 
   hkbLabel(hk: Handlungskompetenz): string {
@@ -156,5 +167,35 @@ export class HkOverview {
 
   contextLabel(): string {
     return this.state.contextLabel();
+  }
+
+  contextShortLabel(): string {
+    const label = this.state.contextLabel();
+
+    if (label.toLowerCase().includes('informatiker')) {
+      return 'Informatiker/in EFZ';
+    }
+
+    if (label.length > 32) {
+      return `${label.slice(0, 29)}...`;
+    }
+
+    return label;
+  }
+
+  private removeLeadingCode(value: string, code: string): string {
+    const trimmed = value.trim();
+    const lowerValue = trimmed.toLowerCase();
+    const lowerCode = code.toLowerCase();
+
+    if (lowerValue.startsWith(`${lowerCode} `)) {
+      return trimmed.slice(code.length).trim();
+    }
+
+    return trimmed;
+  }
+
+  private normalise(value: string): string {
+    return value.trim().toLowerCase().replace(/\s+/g, ' ');
   }
 }

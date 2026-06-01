@@ -54,19 +54,32 @@
         <a
           class="hk-card"
           [routerLink]="['/handlungskompetenzen', hkId(hk)]"
+          [attr.aria-label]="'Handlungskompetenz ' + hkCode(hk) + ' öffnen'"
         >
           <article>
-            <div class="hk-content">
-              <span class="hk-code">{{ hkCode(hk) }}</span>
+            <div class="card-header">
+              <span class="card-type">Kompetenz</span>
+              <strong class="card-code">{{ hkCode(hk) }}</strong>
+            </div>
+
+            <div class="card-body">
               <h2>{{ hkTitle(hk) }}</h2>
-              <p>{{ hkDescription(hk) }}</p>
+
+              @if (hkDescription(hk)) {
+                <p>{{ hkDescription(hk) }}</p>
+              }
             </div>
 
             <footer class="hk-tags">
-              <span class="tag tag-primary">{{ contextLabel() }}</span>
-              <span class="tag tag-warning">{{ hkbLabel(hk) }}</span>
-              <span class="tag tag-soft">{{ lehrjahrLabel(hk) }}</span>
-              <span class="tag tag-info">{{ moduleCountLabel(hk) }}</span>
+              <div class="tag-row tag-row-context">
+                <span class="tag tag-primary">{{ contextShortLabel() }}</span>
+              </div>
+
+              <div class="tag-row tag-row-meta">
+                <span class="tag tag-warning">{{ hkbLabel(hk) }}</span>
+                <span class="tag tag-soft">{{ lehrjahrLabel(hk) }}</span>
+                <span class="tag tag-info">{{ moduleCountLabel(hk) }}</span>
+              </div>
             </footer>
           </article>
         </a>

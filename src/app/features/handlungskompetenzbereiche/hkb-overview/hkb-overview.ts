@@ -72,15 +72,41 @@ export class HkbOverview {
   }
 
   hkbCode(hkb: Handlungskompetenzbereich): string {
-    return hkb.kennung || `HKB ${hkb.id}`;
+    const card = hkb as HkbCard;
+    const rawCode = card.kennung || card.kuerzel || card.code || String(hkb.id);
+
+    if (rawCode.toLowerCase().startsWith('hkb')) {
+      return rawCode.toUpperCase();
+    }
+
+    return `HKB ${rawCode.toUpperCase()}`;
   }
 
   hkbTitle(hkb: Handlungskompetenzbereich): string {
-    return hkb.kennung || `HKB ${hkb.id}`;
+    const card = hkb as HkbCard;
+    const code = this.hkbCode(hkb);
+
+    const title =
+      card.titel ||
+      card.bezeichnung ||
+      card.name ||
+      card.kurzbeschreibung ||
+      card.beschreibung ||
+      code;
+
+    return this.removeLeadingCode(title, code);
   }
 
   hkbDescription(hkb: Handlungskompetenzbereich): string {
-    return hkb.beschreibung || 'Keine Beschreibung vorhanden.';
+    const card = hkb as HkbCard;
+    const description = card.beschreibung || card.kurzbeschreibung || '';
+    const title = this.hkbTitle(hkb);
+
+    if (!description || this.normalise(description) === this.normalise(title)) {
+      return '';
+    }
+
+    return this.removeLeadingCode(description, this.hkbCode(hkb));
   }
 
   handlungskompetenzCount(hkb: Handlungskompetenzbereich): number {
@@ -113,5 +139,45 @@ export class HkbOverview {
 
   contextLabel(): string {
     return this.state.contextLabel();
+  }
+
+  contextShortLabel(): string {
+    const label = this.state.contextLabel();
+
+    if (label.toLowerCase().includes('informatiker')) {
+      return 'Informatiker/in EFZ';
+    }
+
+    if (label.length > 32) {
+      return `${label.slice(0, 29)}...`;
+    }
+
+    return label;
+  }
+
+  fachrichtungShortLabel(): string | null {
+  const fachrichtung = this.state.selectedFachrichtung();
+
+  if (!fachrichtung) {
+    return null;
+  }
+
+  return fachrichtung.titel || `Fachrichtung ${fachrichtung.id}`;
+}
+
+  private removeLeadingCode(value: string, code: string): string {
+    const trimmed = value.trim();
+    const lowerValue = trimmed.toLowerCase();
+    const lowerCode = code.toLowerCase();
+
+    if (lowerValue.startsWith(`${lowerCode} `)) {
+      return trimmed.slice(code.length).trim();
+    }
+
+    return trimmed;
+  }
+
+  private normalise(value: string): string {
+    return value.trim().toLowerCase().replace(/\s+/g, ' ');
   }
 }

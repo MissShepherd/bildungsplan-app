@@ -54,17 +54,34 @@
         <a
           class="hkb-card"
           [routerLink]="['/handlungskompetenzbereiche', hkbId(hkb)]"
+          [attr.aria-label]="hkbCode(hkb) + ' öffnen'"
         >
           <article>
-            <div class="hkb-content">
-              <span class="hkb-code">{{ hkbCode(hkb) }}</span>
+            <div class="card-header">
+              <span class="card-type">Bereich</span>
+              <strong class="card-code">{{ hkbCode(hkb) }}</strong>
+            </div>
+
+            <div class="card-body">
               <h2>{{ hkbTitle(hkb) }}</h2>
-              <p>{{ hkbDescription(hkb) }}</p>
+
+              @if (hkbDescription(hkb)) {
+                <p>{{ hkbDescription(hkb) }}</p>
+              }
             </div>
 
             <footer class="hkb-tags">
-              <span class="tag tag-primary">{{ contextLabel() }}</span>
-              <span class="tag tag-soft">{{ handlungskompetenzCountLabel(hkb) }}</span>
+              <div class="tag-row tag-row-context">
+                <span class="tag tag-primary">{{ contextShortLabel() }}</span>
+              </div>
+
+              <div class="tag-row tag-row-meta">
+                @if (fachrichtungShortLabel()) {
+                  <span class="tag tag-soft">{{ fachrichtungShortLabel() }}</span>
+                }
+
+                <span class="tag tag-info">{{ handlungskompetenzCountLabel(hkb) }}</span>
+              </div>
             </footer>
           </article>
         </a>
