@@ -37,13 +37,25 @@ export class ModulOverview {
 
   readonly moduleForCurrentSelection = computed(() => {
     const selectedLernortId = this.state.selectedLernortId();
-    const items = this.state.module();
+    const selectedLehrjahre = this.state.selectedLehrjahre();
+    const selectedModultypen = this.state.selectedModultypen();
 
-    if (selectedLernortId === null) {
-      return items;
-    }
+    return this.state.module().filter((modul) => {
+      const matchesLernort =
+        selectedLernortId === null || modul.lernortId === selectedLernortId;
 
-    return items.filter((modul) => modul.lernortId === selectedLernortId);
+      const matchesLehrjahr =
+        selectedLehrjahre.length === 0 ||
+        (modul.lehrjahr !== null &&
+          modul.lehrjahr !== undefined &&
+          selectedLehrjahre.includes(modul.lehrjahr));
+
+      const matchesModultyp =
+        selectedModultypen.length === 0 ||
+        selectedModultypen.includes(this.modulType(modul));
+
+      return matchesLernort && matchesLehrjahr && matchesModultyp;
+    });
   });
 
   readonly visibleFilteredModule = computed(() => {
@@ -69,7 +81,6 @@ export class ModulOverview {
       return searchableText.includes(term);
     });
   });
-
   updateSearchTerm(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchTerm.set(input.value);
@@ -95,17 +106,17 @@ export class ModulOverview {
     return modul.beschreibung || 'Keine Beschreibung vorhanden.';
   }
 
-  modulType(modul: Modul): string {
-    if (modul.pflicht === true) {
-      return 'Pflichtmodul';
-    }
-
-    if (modul.pflicht === false) {
-      return 'Nicht als Pflicht markiert';
-    }
-
-    return 'Modultyp offen';
+modulType(modul: Modul): string {
+  if (modul.pflicht === true) {
+    return 'Pflichtmodul';
   }
+
+  if (modul.pflicht === false) {
+    return 'Wahlmodul';
+  }
+
+  return 'Modultyp offen';
+}
 
   lehrjahrLabel(modul: Modul): string {
     if (!modul.lehrjahr) {
