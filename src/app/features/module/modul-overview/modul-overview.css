@@ -61,12 +61,13 @@
 
 .module-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  align-items: stretch;
+  gap: 20px;
 }
 
 .module-card {
-  min-height: 244px;
+  min-height: 230px;
   color: inherit;
   text-decoration: none;
   border-radius: 18px;
@@ -74,11 +75,12 @@
 
 .module-card article {
   position: relative;
+  min-height: 230px;
   height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 18px;
+  padding: 18px 18px 16px;
   background: #ffffff;
   border: 1px solid #d9dde3;
   border-radius: 18px;
@@ -114,7 +116,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .card-type {
@@ -133,7 +135,7 @@
 
 .card-code {
   color: #111827;
-  font-size: 25px;
+  font-size: 26px;
   font-weight: 900;
   line-height: 1;
   text-align: right;
@@ -141,60 +143,70 @@
 
 .card-body {
   flex: 1;
-  min-height: 92px;
+  min-height: 78px;
+  padding-right: 6px;
 }
 
 .card-body h2 {
-  margin: 0 0 10px;
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
   color: #111827;
   font-size: 18px;
   font-weight: 800;
-  line-height: 1.16;
+  line-height: 1.18;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
 }
 
 .card-body p {
   display: -webkit-box;
-  margin: 0;
+  margin: 10px 0 0;
   overflow: hidden;
   color: #4b5563;
   font-size: 13px;
   line-height: 1.45;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
 }
 
 .module-tags {
   display: flex;
   flex-direction: column;
   gap: 7px;
-  margin-top: 18px;
+  margin-top: auto;
+  padding-top: 18px;
 }
 
 .tag-row {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 7px;
 }
 
 .tag-row-context {
-  min-height: 23px;
+  flex-wrap: wrap;
+  min-height: 22px;
 }
 
 .tag-row-meta {
-  min-height: 23px;
+  flex-wrap: nowrap;
+  min-height: 22px;
 }
 
 .tag {
   display: inline-flex;
   align-items: center;
-  min-height: 23px;
+  min-height: 22px;
   max-width: 100%;
-  padding: 5px 9px;
+  padding: 4px 8px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .tag-primary {
@@ -215,6 +227,18 @@
 .tag-warning {
   background: #ffe2c4;
   color: #7a3d10;
+}
+
+@media (max-width: 1300px) {
+  .module-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .tag-row-meta {
+    flex-wrap: wrap;
+  }
 }
 
 .empty-state {
