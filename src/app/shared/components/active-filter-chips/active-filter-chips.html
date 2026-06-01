@@ -1,0 +1,17 @@
+<section class="active-filter-box" aria-label="Aktive Filter">
+  <div class="active-filter-title">Aktive Filter</div>
+
+  <div class="active-filter-list">
+    @for (chip of chips(); track chip.id) {
+      <button
+        type="button"
+        class="active-filter-chip"
+        (click)="chip.remove()"
+        [attr.aria-label]="'Filter entfernen: ' + chip.label"
+      >
+        <span>{{ chip.label }}</span>
+        <span aria-hidden="true">×</span>
+      </button>
+    }
+  </div>
+</section>

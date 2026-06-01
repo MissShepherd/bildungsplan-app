@@ -21,6 +21,9 @@ export class BildungsplanStateService {
   readonly selectedEfz = signal<Efz | null>(null);
   readonly selectedFachrichtung = signal<Fachrichtung | null>(null);
   readonly selectedLernort = signal<Lernort | null>(null);
+  readonly selectedLehrjahre = signal<number[]>([]);
+  readonly selectedModultypen = signal<string[]>([]);
+
   readonly selectedHandlungskompetenzbereich =
     signal<Handlungskompetenzbereich | null>(null);
   readonly selectedHandlungskompetenz = signal<Handlungskompetenz | null>(null);
@@ -40,10 +43,19 @@ export class BildungsplanStateService {
 
   readonly selectedLernortId = computed(() => this.selectedLernort()?.id ?? null);
 
-  readonly hasSearchTerm = computed(() => this.normalizedSearchTerm().length > 0);
-
   readonly normalizedSearchTerm = computed(() =>
     this.searchTerm().trim().toLowerCase()
+  );
+
+  readonly hasSearchTerm = computed(() => this.normalizedSearchTerm().length > 0);
+
+  readonly hasActiveFilters = computed(
+    () =>
+      this.selectedEfz() !== null ||
+      this.selectedFachrichtung() !== null ||
+      this.selectedLernort() !== null ||
+      this.selectedLehrjahre().length > 0 ||
+      this.selectedModultypen().length > 0
   );
 
   readonly requiresFachrichtung = computed(
@@ -83,19 +95,32 @@ export class BildungsplanStateService {
     return `${efz.titel} / ${fachrichtung.titel}`;
   });
 
-    readonly visibleLernorte = computed(() => this.lernorte());
+  readonly visibleLernorte = computed(() => this.lernorte());
 
-    readonly visibleModule = computed(() => {
-      const selectedLernortId = this.selectedLernortId();
+  readonly visibleModule = computed(() => {
+    const selectedLernortId = this.selectedLernortId();
+    const selectedLehrjahre = this.selectedLehrjahre();
+    const selectedModultypen = this.selectedModultypen();
 
-      if (selectedLernortId === null) {
-        return this.module();
-      }
+    return this.module().filter((modul) => {
+      const matchesLernort =
+        selectedLernortId === null || modul.lernortId === selectedLernortId;
 
-      return this.module().filter(
-        (modul) => modul.lernortId === selectedLernortId
-      );
+      const modulLehrjahr = modul.lehrjahr;
+
+      const matchesLehrjahr =
+        selectedLehrjahre.length === 0 ||
+        (modulLehrjahr !== undefined &&
+          modulLehrjahr !== null &&
+          selectedLehrjahre.includes(modulLehrjahr));
+
+      const matchesModultyp =
+        selectedModultypen.length === 0 ||
+        selectedModultypen.includes(this.modulTypeLabel(modul));
+
+      return matchesLernort && matchesLehrjahr && matchesModultyp;
     });
+  });
 
   readonly hasContextData = computed(
     () =>
@@ -120,6 +145,10 @@ export class BildungsplanStateService {
     this.clearContextData();
   }
 
+  clearEfzSelection(): void {
+    this.clearAll();
+  }
+
   setFachrichtungen(fachrichtungen: Fachrichtung[]): void {
     this.fachrichtungen.set(fachrichtungen);
     this.fachrichtungenLoaded.set(true);
@@ -133,6 +162,14 @@ export class BildungsplanStateService {
     this.clearContextData();
   }
 
+  clearFachrichtungSelection(): void {
+    this.selectedFachrichtung.set(null);
+
+    this.clearSearch();
+    this.clearBusinessObjectSelection();
+    this.clearContextData();
+  }
+
   setLernorte(lernorte: Lernort[]): void {
     this.lernorte.set(lernorte);
   }
@@ -140,6 +177,48 @@ export class BildungsplanStateService {
   selectLernort(lernort: Lernort | null): void {
     this.selectedLernort.set(lernort);
     this.selectedModul.set(null);
+  }
+
+  clearLernortSelection(): void {
+    this.selectLernort(null);
+  }
+
+  toggleLehrjahr(lehrjahr: number): void {
+    const currentValues = this.selectedLehrjahre();
+
+    if (currentValues.includes(lehrjahr)) {
+      this.selectedLehrjahre.set(
+        currentValues.filter((value) => value !== lehrjahr)
+      );
+      return;
+    }
+
+    this.selectedLehrjahre.set([...currentValues, lehrjahr]);
+  }
+
+  removeLehrjahr(lehrjahr: number): void {
+    this.selectedLehrjahre.set(
+      this.selectedLehrjahre().filter((value) => value !== lehrjahr)
+    );
+  }
+
+  toggleModultyp(modultyp: string): void {
+    const currentValues = this.selectedModultypen();
+
+    if (currentValues.includes(modultyp)) {
+      this.selectedModultypen.set(
+        currentValues.filter((value) => value !== modultyp)
+      );
+      return;
+    }
+
+    this.selectedModultypen.set([...currentValues, modultyp]);
+  }
+
+  removeModultyp(modultyp: string): void {
+    this.selectedModultypen.set(
+      this.selectedModultypen().filter((value) => value !== modultyp)
+    );
   }
 
   setHandlungskompetenzbereiche(
@@ -199,6 +278,9 @@ export class BildungsplanStateService {
 
   clearContextData(): void {
     this.selectedLernort.set(null);
+    this.selectedLehrjahre.set([]);
+    this.selectedModultypen.set([]);
+
     this.lernorte.set([]);
     this.handlungskompetenzbereiche.set([]);
     this.handlungskompetenzen.set([]);
@@ -209,6 +291,8 @@ export class BildungsplanStateService {
     this.selectedEfz.set(null);
     this.selectedFachrichtung.set(null);
     this.selectedLernort.set(null);
+    this.selectedLehrjahre.set([]);
+    this.selectedModultypen.set([]);
 
     this.fachrichtungen.set([]);
     this.fachrichtungenLoaded.set(false);
@@ -220,5 +304,17 @@ export class BildungsplanStateService {
 
     this.isLoading.set(false);
     this.error.set(null);
+  }
+
+  private modulTypeLabel(modul: Modul): string {
+    if (modul.pflicht === true) {
+      return 'Pflichtmodul';
+    }
+
+    if (modul.pflicht === false) {
+      return 'Nicht-Pflichtmodul';
+    }
+
+    return 'Modultyp offen';
   }
 }

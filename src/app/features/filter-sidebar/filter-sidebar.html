@@ -18,7 +18,12 @@
       <span>Filter</span>
     </div>
 
-    <button type="button" class="clear-button" (click)="clearSelection()">
+    <button
+      type="button"
+      class="clear-button"
+      (click)="clearSelection()"
+      [disabled]="!state.hasActiveFilters()"
+    >
       clear filter
     </button>
   </div>
@@ -26,6 +31,10 @@
   @if (state.error()) {
     <p class="filter-error">{{ state.error() }}</p>
   }
+
+  @if (state.hasActiveFilters()) {
+  <app-active-filter-chips></app-active-filter-chips>
+}
 
   <section class="filter-group">
     <h3>EFZ</h3>
@@ -51,7 +60,9 @@
       @if (!state.fachrichtungenLoaded()) {
         <p class="filter-hint">Fachrichtungen werden geladen...</p>
       } @else if (state.fachrichtungen().length === 0) {
-        <p class="filter-hint">Für dieses EFZ sind keine Fachrichtungen vorhanden.</p>
+        <p class="filter-hint">
+          Für dieses EFZ sind keine Fachrichtungen vorhanden.
+        </p>
       } @else {
         @for (fachrichtung of state.fachrichtungen(); track fachrichtung.id) {
           <label class="filter-option">
@@ -79,7 +90,7 @@
             <input
               type="checkbox"
               [checked]="state.selectedLernortId() === lernort.id"
-              (change)="state.selectLernort(state.selectedLernortId() === lernort.id ? null : lernort)"
+              (change)="toggleLernort(lernort)"
             />
 
             <span>{{ lernort.beschreibung || lernort.kennung }}</span>
@@ -97,7 +108,12 @@
 
       @for (lehrjahr of lehrjahrOptions; track lehrjahr.id) {
         <label class="filter-option">
-          <input type="checkbox" />
+          <input
+            type="checkbox"
+            [checked]="state.selectedLehrjahre().includes(lehrjahr.id)"
+            (change)="toggleLehrjahr(lehrjahr.id)"
+          />
+
           <span>{{ lehrjahr.label }}</span>
         </label>
       }
@@ -108,7 +124,12 @@
 
       @for (modultyp of modultypOptions; track modultyp) {
         <label class="filter-option">
-          <input type="checkbox" />
+          <input
+            type="checkbox"
+            [checked]="state.selectedModultypen().includes(modultyp)"
+            (change)="toggleModultyp(modultyp)"
+          />
+
           <span>{{ modultyp }}</span>
         </label>
       }
