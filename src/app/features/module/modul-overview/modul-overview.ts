@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 
 import { BildungsplanStateService } from '../../../core/state/bildungsplan-state.service';
 import { Modul } from '../../../models/modul.model';
+import { ActiveFilterChipsComponent } from '../../../shared/components/active-filter-chips/active-filter-chips';
 
 type ModulCard = Modul &
   Partial<
@@ -26,7 +27,7 @@ type ModulCard = Modul &
 @Component({
   selector: 'app-modul-overview',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ActiveFilterChipsComponent],
   templateUrl: './modul-overview.html',
   styleUrl: './modul-overview.css',
 })

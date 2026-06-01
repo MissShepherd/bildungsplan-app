@@ -12,10 +12,11 @@ import { Handlungskompetenzbereich } from '../../../models/handlungskompetenzber
 import { Handlungskompetenz } from '../../../models/handlungskompetenz.model';
 import { Modul } from '../../../models/modul.model';
 import { SearchResults } from '../search-results/search-results';
+import { ActiveFilterChipsComponent } from '../../../shared/components/active-filter-chips/active-filter-chips';
 
 @Component({
   selector: 'app-search-page',
-  imports: [SearchResults],
+  imports: [SearchResults, ActiveFilterChipsComponent],
   templateUrl: './search-page.html',
   styleUrl: './search-page.css',
 })

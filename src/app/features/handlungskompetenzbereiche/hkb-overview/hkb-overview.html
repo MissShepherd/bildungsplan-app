@@ -13,7 +13,7 @@
       <div class="search-box">
         <input
           type="search"
-          placeholder="Handlungskompetenz suchen"
+          placeholder="Handlungskompetenzbereich suchen"
           [value]="searchTerm()"
           (input)="updateSearchTerm($event)"
           [disabled]="!state.isContextComplete()"
@@ -28,15 +28,7 @@
         }
       </div>
 
-      <div class="active-filters" aria-label="Aktive Filter">
-        <span>Active filters:</span>
-
-        @if (state.isContextComplete()) {
-          <strong>{{ contextLabel() }}</strong>
-        } @else {
-          <strong>Kein vollständiger Kontext</strong>
-        }
-      </div>
+      <app-active-filter-chips></app-active-filter-chips>
     </section>
   </div>
 

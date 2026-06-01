@@ -29,16 +29,7 @@
         }
       </div>
 
-      <div class="active-filters" aria-label="Aktive Filter">
-        <span>Aktive Filter:</span>
-
-        @if (state.isContextComplete()) {
-          <strong>{{ contextLabel() }}</strong>
-          <strong>{{ selectedLernortLabel() }}</strong>
-        } @else {
-          <strong>Kein vollständiger Kontext</strong>
-        }
-      </div>
+      <app-active-filter-chips></app-active-filter-chips>
     </section>
   </div>
 

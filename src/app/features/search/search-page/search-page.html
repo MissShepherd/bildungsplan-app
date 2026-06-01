@@ -3,9 +3,9 @@
     <p class="eyebrow">Volltextsuche</p>
     <h1>Bildungsplan durchsuchen</h1>
     <p>
-      Die Suche berücksichtigt den aktuell gewählten Kontext. Handlungskompetenzbereiche
-      und Handlungskompetenzen werden clientseitig gefiltert, Module werden über die
-      Suchschnittstelle der API gesucht.
+      Die Suche berücksichtigt den aktuell gewählten Kontext.
+      Handlungskompetenzbereiche und Handlungskompetenzen werden clientseitig
+      gefiltert, Module werden über die Suchschnittstelle der API gesucht.
     </p>
   </header>
 
@@ -20,39 +20,48 @@
         Suchbegriff
       </label>
 
-      <div class="search-input-wrapper">
-        <input
-          id="bildungsplan-search"
-          type="search"
-          placeholder="Begriff, Kennung oder Beschreibung suchen"
-          [value]="state.searchTerm()"
-          (input)="updateSearchTerm($event)"
-          (keydown.enter)="search()"
-          [disabled]="!state.isContextComplete() || isSearching()"
-        />
+      <div class="search-input-row">
+        <div class="search-input-wrapper">
+          <input
+            id="bildungsplan-search"
+            type="search"
+            placeholder="Begriff, Kennung oder Beschreibung suchen"
+            [value]="state.searchTerm()"
+            (input)="updateSearchTerm($event)"
+            (keydown.enter)="search()"
+            [disabled]="!state.isContextComplete() || isSearching()"
+          />
 
-        @if (state.searchTerm()) {
-          <button
-            type="button"
-            class="clear-button"
-            aria-label="Suche zurücksetzen"
-            (click)="clearSearch()"
-            [disabled]="isSearching()"
-          >
-            ×
-          </button>
-        }
+          @if (state.searchTerm()) {
+            <button
+              type="button"
+              class="clear-button"
+              aria-label="Suche zurücksetzen"
+              (click)="clearSearch()"
+              [disabled]="isSearching()"
+            >
+              ×
+            </button>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="search-button"
+          (click)="search()"
+          [disabled]="!canSearch()"
+        >
+          Suchen
+        </button>
       </div>
-
-      <button
-        type="button"
-        class="search-button"
-        (click)="search()"
-        [disabled]="!canSearch()"
-      >
-        Suchen
-      </button>
     </div>
+
+    @if (state.isContextComplete()) {
+      <div class="filter-panel" aria-label="Aktive Filter">
+        <p class="filter-panel-label">Aktive Filter</p>
+        <app-active-filter-chips></app-active-filter-chips>
+      </div>
+    }
 
     @if (!state.isContextComplete()) {
       <div class="info-state" role="status">
@@ -77,8 +86,9 @@
       <div class="empty-state" role="status">
         <h2>Keine Treffer gefunden</h2>
         <p>
-          Zum eingegebenen Suchbegriff wurden im aktuellen Kontext keine passenden
-          Handlungskompetenzbereiche, Handlungskompetenzen oder Module gefunden.
+          Zum eingegebenen Suchbegriff wurden im aktuellen Kontext keine
+          passenden Handlungskompetenzbereiche, Handlungskompetenzen oder Module
+          gefunden.
         </p>
       </div>
     }
