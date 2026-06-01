@@ -8,32 +8,32 @@ Das Frontend konsumiert eine bestehende REST-API. Das Backend ist nicht Bestandt
 
 ## Techstack
 
-- Angular 20
-- TypeScript
-- HTML5
-- CSS3
-- Node.js
-- npm
-- REST-API über HTTP
-- Git / GitLab
+* Angular 20
+* TypeScript
+* HTML5
+* CSS3
+* Node.js
+* npm
+* REST-API über HTTP
+* Git / GitLab
 
 ## Voraussetzungen
 
 Vor dem Start müssen folgende Programme installiert sein:
 
-- Node.js
-- npm
-- Angular CLI
-- Java
-- Zugriff auf die Backend-JAR-Datei `bildungsplan-1.0.7.jar`
+* Node.js
+* npm
+* Angular CLI
+* Java
+* Zugriff auf die Backend-JAR-Datei `bildungsplan-1.0.8.jar`
 
 ## Backend starten
 
-Das Backend wird aus dem Ordner gestartet, in dem sich die Datei `bildungsplan-1.0.7.jar` befindet:
+Das Backend wird aus dem Ordner gestartet, in dem sich die Datei `bildungsplan-1.0.8.jar` befindet:
 
 ```bash
-java -jar bildungsplan-1.0.7.jar
-````
+java -jar bildungsplan-1.0.8.jar
+```
 
 Standardmässig startet die REST-API auf Port 8080:
 
@@ -46,7 +46,7 @@ http://localhost:8080
 Falls Port 8080 bereits durch einen anderen Prozess belegt ist, kann das Backend temporär auf einem anderen Port gestartet werden, zum Beispiel auf Port 8008:
 
 ```bash
-java -jar bildungsplan-1.0.7.jar --server.port=8008
+java -jar bildungsplan-1.0.8.jar --server.port=8008
 ```
 
 Die REST-API ist danach unter folgender Adresse erreichbar:
@@ -113,6 +113,10 @@ Wenn das Backend nicht erreichbar ist, können im Frontend keine Daten geladen w
 * Stimmt der verwendete Port?
 * Ist die API-Basis-URL im Frontend korrekt konfiguriert?
 * Wird der Port bereits durch einen anderen Prozess verwendet?
+
+## Backend-Version
+
+Für die lokale Entwicklung und die Reproduzierbarkeit der Anwendung wird die Backend-Version `bildungsplan-1.0.8.jar` verwendet.
 
 ## Versionierung
 
