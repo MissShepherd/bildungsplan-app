@@ -42,7 +42,7 @@
   padding: 14px 16px;
   background: #ffffff;
   border: 1px solid #d8dce2;
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 .summary-label {
@@ -61,100 +61,145 @@
 
 .module-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
 }
 
 .module-card {
-  min-height: 238px;
+  min-height: 244px;
   color: inherit;
   text-decoration: none;
+  border-radius: 18px;
 }
 
 .module-card article {
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 14px;
+  overflow: hidden;
+  padding: 18px;
   background: #ffffff;
-  border: 1px solid #d8dce2;
-  border-radius: 8px;
+  border: 1px solid #d9dde3;
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(17, 24, 39, 0.06);
   transition:
     transform 160ms ease,
     border-color 160ms ease,
     box-shadow 160ms ease;
 }
 
-.module-card:hover article {
-  transform: translateY(-2px);
+.module-card article::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: linear-gradient(90deg, #4b377f, #1f6f8b, #1f8a5b);
+}
+
+.module-card:hover article,
+.module-card:focus-visible article {
+  transform: translateY(-3px);
   border-color: #b8f7cf;
-  box-shadow: 0 8px 18px rgba(17, 24, 39, 0.12);
+  box-shadow: 0 14px 28px rgba(17, 24, 39, 0.14);
 }
 
-.module-content {
-  min-height: 145px;
-  padding: 18px;
-  background: #f5f6f8;
-  border: 1px solid #d9dde3;
-  border-radius: 6px;
+.module-card:focus-visible {
+  outline: 3px solid rgba(184, 247, 207, 0.95);
+  outline-offset: 3px;
 }
 
-.module-code {
-  display: block;
-  margin-bottom: 4px;
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.card-type {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 5px 11px;
+  background: #efe9f8;
+  color: #4b377f;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.card-code {
   color: #111827;
-  font-size: 12px;
+  font-size: 25px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: right;
+}
+
+.card-body {
+  flex: 1;
+  min-height: 92px;
+}
+
+.card-body h2 {
+  margin: 0 0 10px;
+  color: #111827;
+  font-size: 18px;
   font-weight: 800;
+  line-height: 1.16;
 }
 
-.module-content h2 {
-  margin: 0 0 8px;
-  color: #111827;
-  font-size: 15px;
-  line-height: 1.25;
-}
-
-.module-content p {
+.card-body p {
+  display: -webkit-box;
   margin: 0;
-  color: #6b7280;
-  font-size: 12px;
+  overflow: hidden;
+  color: #4b5563;
+  font-size: 13px;
   line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
 }
 
 .module-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 7px;
+  margin-top: 18px;
 }
 
 .tag {
   display: inline-flex;
   align-items: center;
-  min-height: 18px;
-  padding: 3px 7px;
-  color: #ffffff;
+  min-height: 23px;
+  max-width: 100%;
+  padding: 5px 9px;
   border-radius: 999px;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
   line-height: 1;
 }
 
 .tag-primary {
   background: #4b377f;
+  color: #ffffff;
 }
 
 .tag-success {
-  background: #1f8a5b;
+  background: #d9f3e6;
+  color: #176143;
 }
 
 .tag-info {
-  background: #1f6f8b;
+  background: #d8ecf7;
+  color: #1f5f78;
 }
 
 .tag-warning {
-  background: #b65f1f;
+  background: #ffe2c4;
+  color: #7a3d10;
 }
 
 .empty-state {
@@ -227,39 +272,15 @@
   font-size: 17px;
 }
 
-.active-filters {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  color: #4b5563;
-  font-size: 12px;
-}
-
-.active-filters strong {
-  display: inline-flex;
-  align-items: center;
-  min-height: 22px;
-  padding: 4px 10px;
-  background: #d1d5db;
-  color: #374151;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 700;
-}
-
 .sticky-page-header {
   position: sticky;
   top: 88px;
   z-index: 700;
-
   display: flex;
   flex-direction: column;
   gap: 18px;
-
   margin: -24px -24px 0;
   padding: 24px 24px 14px;
-
   background: #f3efe8;
   border-bottom: 1px solid #d8dce2;
   box-shadow: 0 4px 10px rgba(17, 24, 39, 0.06);

@@ -69,16 +69,27 @@
 
     <section class="module-grid" aria-label="Modulliste">
       @for (modul of visibleFilteredModule(); track modulId(modul)) {
-        <a class="module-card" [routerLink]="['/module', modulId(modul)]">
+        <a
+          class="module-card"
+          [routerLink]="['/module', modulId(modul)]"
+          [attr.aria-label]="'Modul ' + modulCode(modul) + ' öffnen'"
+        >
           <article>
-            <div class="module-content">
-              <span class="module-code">{{ modulCode(modul) }}</span>
+            <div class="card-header">
+              <span class="card-type">Modul</span>
+              <strong class="card-code">{{ modulCode(modul) }}</strong>
+            </div>
+
+            <div class="card-body">
               <h2>{{ modulTitle(modul) }}</h2>
-              <p>{{ modulDescription(modul) }}</p>
+
+              @if (modulDescription(modul)) {
+                <p>{{ modulDescription(modul) }}</p>
+              }
             </div>
 
             <footer class="module-tags">
-              <span class="tag tag-primary">{{ contextLabel() }}</span>
+              <span class="tag tag-primary">{{ contextShortLabel() }}</span>
               <span class="tag tag-success">{{ lernortLabel(modul) }}</span>
               <span class="tag tag-info">{{ lehrjahrLabel(modul) }}</span>
               <span class="tag tag-warning">{{ modulType(modul) }}</span>
