@@ -1,3 +1,5 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EfzSelector } from './efz-selector';
@@ -8,9 +10,12 @@ describe('EfzSelector', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EfzSelector]
-    })
-    .compileComponents();
+      imports: [EfzSelector],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(EfzSelector);
     component = fixture.componentInstance;
