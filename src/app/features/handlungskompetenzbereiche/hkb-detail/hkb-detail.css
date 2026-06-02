@@ -245,7 +245,7 @@
   position: absolute;
   inset: 0 0 auto;
   height: 4px;
-  background: linear-gradient(90deg, #1f6f8b, #2f7fa0);
+  background: linear-gradient(90deg, #4b377f, #ffe66d, #1f6f8b);
 }
 
 .relation-card:hover article,
