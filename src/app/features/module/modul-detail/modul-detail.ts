@@ -34,7 +34,7 @@ export class ModulDetail implements OnInit {
         const id = Number(params.get('id'));
 
         if (!Number.isInteger(id) || id <= 0) {
-          this.error.set('Ungültige ID für das Modul.');
+          this.setInvalidIdState();
           return;
         }
 
@@ -74,6 +74,14 @@ export class ModulDetail implements OnInit {
         'Die verknüpften Handlungskompetenzen konnten nicht geladen werden.'
       );
     }
+  }
+
+  private setInvalidIdState(): void {
+    this.isLoading.set(false);
+    this.error.set('Ungültige ID für das Modul.');
+    this.relationError.set(null);
+    this.modul.set(null);
+    this.handlungskompetenzen.set([]);
   }
 
   lehrjahrLabel(modul: Modul): string {
