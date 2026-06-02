@@ -1,71 +1,152 @@
 <section class="detail-page">
   <a class="back-link" routerLink="/handlungskompetenzen">
-    Zurück zu den Handlungskompetenzen
+    ← Zurück zu den Handlungskompetenzen
   </a>
 
   @if (isLoading()) {
-    <div class="loading-state" role="status">
-      Detaildaten werden geladen...
+    <div class="state-card loading-state" role="status">
+      <strong>Detaildaten werden geladen...</strong>
+      <span>Die Handlungskompetenz und die zugehörigen Module werden von der API geladen.</span>
     </div>
   } @else if (error()) {
-    <div class="error-state" role="alert">
-      {{ error() }}
+    <div class="state-card error-state" role="alert">
+      <strong>Fehler beim Laden</strong>
+      <span>{{ error() }}</span>
     </div>
   } @else if (hk(); as hk) {
-    <article class="detail-card">
-      <header class="detail-header">
-        <p class="eyebrow">Handlungskompetenz</p>
+    <article class="detail-hero">
+      <div class="hero-main">
+        <div class="hero-topline">
+          <span class="type-badge">Handlungskompetenz</span>
+          <span class="id-badge">ID {{ hk.id }}</span>
+          <span class="count-badge">
+            {{ module().length }} {{ module().length === 1 ? 'Modul' : 'Module' }}
+          </span>
+        </div>
+
         <h1>{{ hk.kennung }}</h1>
-        <p>{{ hk.beschreibung }}</p>
-      </header>
 
-      <dl class="meta-grid">
-        <div>
-          <dt>ID</dt>
-          <dd>{{ hk.id }}</dd>
-        </div>
+        <p>
+          Detailansicht der ausgewählten Handlungskompetenz mit Zuordnung zum
+          Handlungskompetenzbereich und den verknüpften Modulen.
+        </p>
+      </div>
 
+      <aside class="hero-summary" aria-label="Zusammenfassung">
         <div>
-          <dt>HKB-ID</dt>
-          <dd>
+          <span>Handlungskompetenzbereich</span>
+          <strong>
             <a [routerLink]="['/handlungskompetenzbereiche', hk.handlungskompetenzbereichId]">
-              {{ hk.handlungskompetenzbereichId }}
+              {{ hk.handlungskompetenzbereichKennung ?? ('HKB ' + hk.handlungskompetenzbereichId) }}
             </a>
-          </dd>
+          </strong>
         </div>
 
         <div>
-          <dt>HKB-Kennung</dt>
-          <dd>{{ hk.handlungskompetenzbereichKennung ?? 'Nicht geliefert' }}</dd>
+          <span>Lehrjahr</span>
+          <strong>{{ hk.lehrjahr ?? 'Nicht angegeben' }}</strong>
         </div>
 
         <div>
-          <dt>Lehrjahr</dt>
-          <dd>{{ hk.lehrjahr ?? 'Nicht angegeben' }}</dd>
+          <span>Zugehörige Module</span>
+          <strong>{{ module().length }}</strong>
         </div>
-      </dl>
+      </aside>
     </article>
 
+    <section class="content-grid">
+      <article class="info-card description-card">
+        <div class="section-heading">
+          <p class="eyebrow">Beschreibung</p>
+          <h2>Inhalt der Handlungskompetenz</h2>
+        </div>
+
+        <p>{{ hk.beschreibung }}</p>
+      </article>
+
+      <article class="info-card">
+        <div class="section-heading">
+          <p class="eyebrow">Zuordnung</p>
+          <h2>Metadaten</h2>
+        </div>
+
+        <dl class="meta-grid">
+          <div>
+            <dt>ID</dt>
+            <dd>{{ hk.id }}</dd>
+          </div>
+
+          <div>
+            <dt>Kennung</dt>
+            <dd>{{ hk.kennung }}</dd>
+          </div>
+
+          <div>
+            <dt>HKB-ID</dt>
+            <dd>
+              <a [routerLink]="['/handlungskompetenzbereiche', hk.handlungskompetenzbereichId]">
+                {{ hk.handlungskompetenzbereichId }}
+              </a>
+            </dd>
+          </div>
+
+          <div>
+            <dt>HKB-Kennung</dt>
+            <dd>{{ hk.handlungskompetenzbereichKennung ?? 'Nicht geliefert' }}</dd>
+          </div>
+
+          <div>
+            <dt>Lehrjahr</dt>
+            <dd>{{ hk.lehrjahr ?? 'Nicht angegeben' }}</dd>
+          </div>
+
+          <div>
+            <dt>Modul-IDs</dt>
+            <dd>{{ hk.modulIds?.length ?? module().length }}</dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+
     <section class="relation-section">
-      <h2>Zugehörige Module</h2>
+      <div class="relation-heading">
+        <div>
+          <p class="eyebrow">Beziehungen</p>
+          <h2>Zugehörige Module</h2>
+        </div>
+
+        <span class="count-badge">
+          {{ module().length }}
+        </span>
+      </div>
 
       @if (module().length > 0) {
         <div class="relation-list">
           @for (modul of module(); track modul.id) {
-            <a class="relation-card" [routerLink]="['/module', modul.id]">
-              <strong>{{ modul.kennung }}</strong>
-              <p>{{ modul.beschreibung }}</p>
+            <a
+              class="relation-card"
+              [routerLink]="['/module', modul.id]"
+              [attr.aria-label]="'Modul ' + modul.kennung + ' öffnen'"
+            >
+              <article>
+                <div class="relation-card-header">
+                  <span class="relation-type">Modul</span>
+                  <strong>{{ modul.kennung }}</strong>
+                </div>
+
+                <p>{{ modul.beschreibung || 'Keine Beschreibung geliefert.' }}</p>
+              </article>
             </a>
           }
         </div>
       } @else {
-        <div class="empty-state" role="status">
+        <div class="state-card empty-state" role="status">
           Zu dieser Handlungskompetenz wurden keine Module gefunden.
         </div>
       }
     </section>
   } @else {
-    <div class="empty-state" role="status">
+    <div class="state-card empty-state" role="status">
       Es wurden keine Detaildaten gefunden.
     </div>
   }
