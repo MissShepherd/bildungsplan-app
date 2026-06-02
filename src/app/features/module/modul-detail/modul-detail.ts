@@ -10,6 +10,7 @@ import { Modul } from '../../../models/modul.model';
 
 @Component({
   selector: 'app-modul-detail',
+  standalone: true,
   imports: [RouterLink],
   templateUrl: './modul-detail.html',
   styleUrl: './modul-detail.css',
@@ -24,6 +25,7 @@ export class ModulDetail implements OnInit {
 
   readonly isLoading = signal(false);
   readonly error = signal<string | null>(null);
+  readonly relationError = signal<string | null>(null);
 
   ngOnInit(): void {
     this.route.paramMap
@@ -43,25 +45,88 @@ export class ModulDetail implements OnInit {
   private async loadDetail(id: number): Promise<void> {
     this.isLoading.set(true);
     this.error.set(null);
+    this.relationError.set(null);
     this.modul.set(null);
     this.handlungskompetenzen.set([]);
 
     try {
-      const [modul, handlungskompetenzen] = await Promise.all([
-        firstValueFrom(this.modulService.getById(id)),
-        firstValueFrom(this.modulService.getHandlungskompetenzen(id)),
-      ]);
-
+      const modul = await firstValueFrom(this.modulService.getById(id));
       this.modul.set(modul);
-      this.handlungskompetenzen.set(handlungskompetenzen);
+
+      await this.loadHandlungskompetenzen(id);
     } catch (error) {
-      this.error.set(this.getErrorMessage(error));
+      this.error.set(this.getModulErrorMessage(error));
     } finally {
       this.isLoading.set(false);
     }
   }
 
-  private getErrorMessage(error: unknown): string {
+  private async loadHandlungskompetenzen(modulId: number): Promise<void> {
+    try {
+      const handlungskompetenzen = await firstValueFrom(
+        this.modulService.getHandlungskompetenzen(modulId)
+      );
+
+      this.handlungskompetenzen.set(handlungskompetenzen);
+    } catch {
+      this.handlungskompetenzen.set([]);
+      this.relationError.set(
+        'Die verknüpften Handlungskompetenzen konnten nicht geladen werden.'
+      );
+    }
+  }
+
+  lehrjahrLabel(modul: Modul): string {
+    if (!modul.lehrjahr) {
+      return 'Nicht angegeben';
+    }
+
+    return `${modul.lehrjahr}. Lehrjahr`;
+  }
+
+  modulTypeLabel(modul: Modul): string {
+    if (modul.pflicht === true) {
+      return 'Pflichtmodul';
+    }
+
+    if (modul.pflicht === false) {
+      return 'Wahlmodul';
+    }
+
+    return 'Nicht angegeben';
+  }
+
+  lernortLabel(modul: Modul): string {
+    if (!modul.lernortId) {
+      return 'Nicht angegeben';
+    }
+
+    const lernorte: Record<number, string> = {
+      1: 'Betrieb',
+      2: 'Berufsfachschule',
+      3: 'Überbetriebliche Kurse',
+    };
+
+    return lernorte[modul.lernortId] ?? `Lernort ${modul.lernortId}`;
+  }
+
+  fachrichtungenLabel(modul: Modul): string {
+    if (!modul.fachrichtungen || modul.fachrichtungen.length === 0) {
+      return 'Keine Angabe';
+    }
+
+    return modul.fachrichtungen.join(', ');
+  }
+
+  handlungskompetenzLabel(hk: Handlungskompetenz): string {
+    return hk.kennung || `Handlungskompetenz ${hk.id}`;
+  }
+
+  handlungskompetenzDescription(hk: Handlungskompetenz): string {
+    return hk.beschreibung || 'Keine Beschreibung vorhanden.';
+  }
+
+  private getModulErrorMessage(error: unknown): string {
     if (error instanceof HttpErrorResponse) {
       if (error.status === 0) {
         return 'Die API ist nicht erreichbar. Bitte prüfen, ob das Backend gestartet ist.';
