@@ -12,6 +12,7 @@ import { SearchPage } from './features/search/search-page/search-page';
 export const routes: Routes = [
   {
     path: '',
+    pathMatch: 'full',
     component: ModulOverview,
     title: 'Bildungsplan - Module',
   },

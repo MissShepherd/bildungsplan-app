@@ -10,6 +10,7 @@ import { Modul } from '../../../models/modul.model';
 
 @Component({
   selector: 'app-hk-detail',
+  standalone: true,
   imports: [RouterLink],
   templateUrl: './hk-detail.html',
   styleUrl: './hk-detail.css',
@@ -32,7 +33,7 @@ export class HkDetail implements OnInit {
         const id = Number(params.get('id'));
 
         if (!Number.isInteger(id) || id <= 0) {
-          this.error.set('Ungültige ID für die Handlungskompetenz.');
+          this.setInvalidIdState();
           return;
         }
 
@@ -59,6 +60,13 @@ export class HkDetail implements OnInit {
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  private setInvalidIdState(): void {
+    this.isLoading.set(false);
+    this.hk.set(null);
+    this.module.set([]);
+    this.error.set('Ungültige ID für die Handlungskompetenz.');
   }
 
   private getErrorMessage(error: unknown): string {
