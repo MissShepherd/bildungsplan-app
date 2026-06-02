@@ -1,62 +1,115 @@
 <section class="detail-page">
   <a class="back-link" routerLink="/handlungskompetenzbereiche">
-    Zurück zu den Handlungskompetenzbereichen
+    ← Zurück zu den Handlungskompetenzbereichen
   </a>
 
   @if (isLoading()) {
-    <div class="loading-state" role="status">
+    <div class="state-card loading-state" role="status">
       Detaildaten werden geladen...
     </div>
   } @else if (error()) {
-    <div class="error-state" role="alert">
+    <div class="state-card error-state" role="alert">
       {{ error() }}
     </div>
   } @else if (hkb(); as hkb) {
-    <article class="detail-card">
-      <header class="detail-header">
-        <p class="eyebrow">Handlungskompetenzbereich</p>
+    <article class="hero-card">
+      <div class="hero-main">
+        <div class="badge-row">
+          <span class="badge badge-purple">Handlungskompetenzbereich</span>
+          <span class="badge badge-blue">ID {{ hkb.id }}</span>
+        </div>
+
         <h1>{{ hkb.kennung }}</h1>
-        <p>{{ hkb.beschreibung }}</p>
-      </header>
 
-      <dl class="meta-grid">
+        <p>
+          Detailinformationen zum ausgewählten Handlungskompetenzbereich,
+          inklusive Kontext im Bildungsplan und zugehöriger Handlungskompetenzen.
+        </p>
+      </div>
+
+      <aside class="hero-meta" aria-label="Kontextinformationen">
         <div>
-          <dt>ID</dt>
-          <dd>{{ hkb.id }}</dd>
+          <span>EFZ-ID</span>
+          <strong>{{ hkb.efzId }}</strong>
         </div>
 
         <div>
-          <dt>EFZ-ID</dt>
-          <dd>{{ hkb.efzId }}</dd>
+          <span>Fachrichtung</span>
+          <strong>{{ hkb.fachrichtungId ?? 'Allgemein' }}</strong>
         </div>
 
         <div>
-          <dt>Fachrichtung-ID</dt>
-          <dd>{{ hkb.fachrichtungId ?? 'Allgemein' }}</dd>
+          <span>Handlungskompetenzen</span>
+          <strong>{{ handlungskompetenzen().length }}</strong>
         </div>
-      </dl>
+      </aside>
     </article>
 
+    <div class="content-grid">
+      <section class="info-card">
+        <p class="eyebrow">Beschreibung</p>
+        <h2>Inhalt des Handlungskompetenzbereichs</h2>
+        <p>{{ hkb.beschreibung || 'Keine Beschreibung vorhanden.' }}</p>
+      </section>
+
+      <section class="info-card">
+        <p class="eyebrow">Zuordnung</p>
+        <h2>Metadaten</h2>
+
+        <dl class="meta-grid">
+          <div>
+            <dt>HKB-ID</dt>
+            <dd>{{ hkb.id }}</dd>
+          </div>
+
+          <div>
+            <dt>Kennung</dt>
+            <dd>{{ hkb.kennung }}</dd>
+          </div>
+
+          <div>
+            <dt>EFZ-ID</dt>
+            <dd>{{ hkb.efzId }}</dd>
+          </div>
+
+          <div>
+            <dt>Fachrichtung</dt>
+            <dd>{{ hkb.fachrichtungId ?? 'Allgemein' }}</dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+
     <section class="relation-section">
-      <h2>Zugehörige Handlungskompetenzen</h2>
+      <header class="relation-header">
+        <div>
+          <p class="eyebrow">Beziehungen</p>
+          <h2>Zugehörige Handlungskompetenzen</h2>
+        </div>
+
+        <span class="count-badge">{{ handlungskompetenzen().length }}</span>
+      </header>
 
       @if (handlungskompetenzen().length > 0) {
-        <div class="relation-list">
+        <div class="relation-grid">
           @for (hk of handlungskompetenzen(); track hk.id) {
             <a class="relation-card" [routerLink]="['/handlungskompetenzen', hk.id]">
-              <strong>{{ hk.kennung }}</strong>
-              <p>{{ hk.beschreibung }}</p>
+              <article>
+                <span class="relation-type">Handlungskompetenz</span>
+                <h3>{{ hk.kennung }}</h3>
+                <p>{{ hk.beschreibung }}</p>
+              </article>
             </a>
           }
         </div>
       } @else {
-        <div class="empty-state" role="status">
+        <div class="state-card empty-state" role="status">
           Zu diesem Handlungskompetenzbereich wurden keine Handlungskompetenzen gefunden.
         </div>
       }
     </section>
   } @else {
-    <div class="empty-state" role="status">
+    <div class="state-card empty-state" role="status">
       Es wurden keine Detaildaten gefunden.
     </div>
   }

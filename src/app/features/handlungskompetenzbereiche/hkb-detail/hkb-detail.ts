@@ -10,6 +10,7 @@ import { Handlungskompetenz } from '../../../models/handlungskompetenz.model';
 
 @Component({
   selector: 'app-hkb-detail',
+  standalone: true,
   imports: [RouterLink],
   templateUrl: './hkb-detail.html',
   styleUrl: './hkb-detail.css',
@@ -32,7 +33,7 @@ export class HkbDetail implements OnInit {
         const id = Number(params.get('id'));
 
         if (!Number.isInteger(id) || id <= 0) {
-          this.error.set('Ungültige ID für den Handlungskompetenzbereich.');
+          this.setInvalidIdState();
           return;
         }
 
@@ -59,6 +60,13 @@ export class HkbDetail implements OnInit {
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  private setInvalidIdState(): void {
+    this.isLoading.set(false);
+    this.hkb.set(null);
+    this.handlungskompetenzen.set([]);
+    this.error.set('Ungültige ID für den Handlungskompetenzbereich.');
   }
 
   private getErrorMessage(error: unknown): string {
