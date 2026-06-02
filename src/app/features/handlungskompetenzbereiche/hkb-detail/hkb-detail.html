@@ -81,23 +81,32 @@
     </div>
 
     <section class="relation-section">
-      <header class="relation-header">
+      <div class="relation-heading">
         <div>
           <p class="eyebrow">Beziehungen</p>
           <h2>Zugehörige Handlungskompetenzen</h2>
         </div>
 
-        <span class="count-badge">{{ handlungskompetenzen().length }}</span>
-      </header>
+        <span class="count-badge">
+          {{ handlungskompetenzen().length }}
+        </span>
+      </div>
 
       @if (handlungskompetenzen().length > 0) {
-        <div class="relation-grid">
+        <div class="relation-list">
           @for (hk of handlungskompetenzen(); track hk.id) {
-            <a class="relation-card" [routerLink]="['/handlungskompetenzen', hk.id]">
+            <a
+              class="relation-card"
+              [routerLink]="['/handlungskompetenzen', hk.id]"
+              [attr.aria-label]="'Handlungskompetenz ' + hk.kennung + ' öffnen'"
+            >
               <article>
-                <span class="relation-type">Handlungskompetenz</span>
-                <h3>{{ hk.kennung }}</h3>
-                <p>{{ hk.beschreibung }}</p>
+                <div class="relation-card-header">
+                  <span class="relation-type">Handlungskompetenz</span>
+                  <strong>{{ hk.kennung }}</strong>
+                </div>
+
+                <p>{{ hk.beschreibung || 'Keine Beschreibung geliefert.' }}</p>
               </article>
             </a>
           }
