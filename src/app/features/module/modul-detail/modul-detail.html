@@ -1,94 +1,162 @@
 <section class="detail-page">
   <a class="back-link" routerLink="/">
+    <span aria-hidden="true">←</span>
     Zurück zur Modulübersicht
   </a>
 
   @if (isLoading()) {
-    <div class="loading-state" role="status">
-      Detaildaten werden geladen...
-    </div>
+    <section class="loading-state" role="status">
+      <strong>Detaildaten werden geladen...</strong>
+      <span>Das Modul und die verknüpften Handlungskompetenzen werden aus der API geladen.</span>
+    </section>
   } @else if (error()) {
-    <div class="error-state" role="alert">
-      {{ error() }}
-    </div>
+    <section class="error-state" role="alert">
+      <strong>Modul konnte nicht geladen werden</strong>
+      <span>{{ error() }}</span>
+    </section>
   } @else if (modul(); as modul) {
-    <article class="detail-card">
-      <header class="detail-header">
-        <p class="eyebrow">Modul</p>
+    <article class="detail-hero">
+      <div class="hero-main">
+        <div class="hero-topline">
+          <span class="type-badge">Modul</span>
+          <span class="id-badge">ID {{ modul.id }}</span>
+        </div>
+
         <h1>{{ modul.kennung }}</h1>
-        <p>{{ modul.beschreibung }}</p>
-      </header>
 
-      <dl class="meta-grid">
+        <p>
+          Detailinformationen zum ausgewählten Modul, inklusive Zuordnung im
+          Bildungsplan-Kontext und verknüpfter Handlungskompetenzen.
+        </p>
+      </div>
+
+      <aside class="hero-summary" aria-label="Kurzangaben zum Modul">
         <div>
-          <dt>ID</dt>
-          <dd>{{ modul.id }}</dd>
+          <span>Lehrjahr</span>
+          <strong>{{ lehrjahrLabel(modul) }}</strong>
         </div>
 
         <div>
-          <dt>Lehrjahr</dt>
-          <dd>{{ modul.lehrjahr ?? 'Nicht angegeben' }}</dd>
+          <span>Modultyp</span>
+          <strong>{{ modulTypeLabel(modul) }}</strong>
         </div>
 
         <div>
-          <dt>Pflicht</dt>
-          <dd>
-            @if (modul.pflicht === true) {
-              Ja
-            } @else if (modul.pflicht === false) {
-              Nein
-            } @else {
-              Nicht angegeben
-            }
-          </dd>
+          <span>Lernort</span>
+          <strong>{{ lernortLabel(modul) }}</strong>
         </div>
-
-        <div>
-          <dt>Lernort</dt>
-          <dd>
-            @if (modul.lernortId) {
-              <a [routerLink]="['/lernorte', modul.lernortId]">
-                {{ modul.lernortId }}
-              </a>
-            } @else {
-              Nicht angegeben
-            }
-          </dd>
-        </div>
-
-        <div>
-          <dt>EFZ-ID</dt>
-          <dd>{{ modul.efzId ?? 'Nicht angegeben' }}</dd>
-        </div>
-
-        <div>
-          <dt>Fachrichtungen</dt>
-          <dd>{{ modul.fachrichtungen?.join(', ') || 'Keine Angabe' }}</dd>
-        </div>
-      </dl>
+      </aside>
     </article>
 
+    <section class="content-grid">
+      <article class="info-card description-card">
+        <div class="section-heading">
+          <p class="eyebrow">Beschreibung</p>
+          <h2>Inhalt des Moduls</h2>
+        </div>
+
+        <p>
+          {{ modul.beschreibung || 'Für dieses Modul wurde keine Beschreibung geliefert.' }}
+        </p>
+      </article>
+
+      <article class="info-card">
+        <div class="section-heading">
+          <p class="eyebrow">Zuordnung</p>
+          <h2>Metadaten</h2>
+        </div>
+
+        <dl class="meta-grid">
+          <div>
+            <dt>Modul-ID</dt>
+            <dd>{{ modul.id }}</dd>
+          </div>
+
+          <div>
+            <dt>Kennung</dt>
+            <dd>{{ modul.kennung }}</dd>
+          </div>
+
+          <div>
+            <dt>Lehrjahr</dt>
+            <dd>{{ lehrjahrLabel(modul) }}</dd>
+          </div>
+
+          <div>
+            <dt>Modultyp</dt>
+            <dd>{{ modulTypeLabel(modul) }}</dd>
+          </div>
+
+          <div>
+            <dt>Lernort</dt>
+            <dd>
+              @if (modul.lernortId) {
+                <a [routerLink]="['/lernorte', modul.lernortId]">
+                  {{ lernortLabel(modul) }}
+                </a>
+              } @else {
+                Nicht angegeben
+              }
+            </dd>
+          </div>
+
+          <div>
+            <dt>EFZ-ID</dt>
+            <dd>{{ modul.efzId ?? 'Nicht angegeben' }}</dd>
+          </div>
+
+          <div>
+            <dt>Fachrichtungen</dt>
+            <dd>{{ fachrichtungenLabel(modul) }}</dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+
     <section class="relation-section">
-      <h2>Zugehörige Handlungskompetenzen</h2>
+      <div class="section-heading relation-heading">
+        <div>
+          <p class="eyebrow">Beziehungen</p>
+          <h2>Zugehörige Handlungskompetenzen</h2>
+        </div>
+
+        <span class="count-badge">
+          {{ handlungskompetenzen().length }}
+        </span>
+      </div>
+
+      @if (relationError()) {
+        <div class="warning-state" role="status">
+          {{ relationError() }}
+        </div>
+      }
 
       @if (handlungskompetenzen().length > 0) {
         <div class="relation-list">
           @for (hk of handlungskompetenzen(); track hk.id) {
-            <a class="relation-card" [routerLink]="['/handlungskompetenzen', hk.id]">
-              <strong>{{ hk.kennung }}</strong>
-              <p>{{ hk.beschreibung }}</p>
+            <a
+              class="relation-card"
+              [routerLink]="['/handlungskompetenzen', hk.id]"
+              [attr.aria-label]="'Handlungskompetenz ' + handlungskompetenzLabel(hk) + ' öffnen'"
+            >
+              <div class="relation-card-header">
+                <span>Handlungskompetenz</span>
+                <strong>{{ handlungskompetenzLabel(hk) }}</strong>
+              </div>
+
+              <p>{{ handlungskompetenzDescription(hk) }}</p>
             </a>
           }
         </div>
-      } @else {
+      } @else if (!relationError()) {
         <div class="empty-state" role="status">
           Zu diesem Modul wurden keine Handlungskompetenzen gefunden.
         </div>
       }
     </section>
   } @else {
-    <div class="empty-state" role="status">
+    <section class="empty-state" role="status">
       Es wurden keine Detaildaten gefunden.
-    </div>
+    </section>
   }
 </section>
