@@ -131,7 +131,16 @@
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
   gap: 18px;
-  align-items: start;
+  align-items: stretch;
+}
+
+.content-grid > .info-card {
+  height: 100%;
+}
+
+.description-card {
+  display: flex;
+  flex-direction: column;
 }
 
 .info-card,
