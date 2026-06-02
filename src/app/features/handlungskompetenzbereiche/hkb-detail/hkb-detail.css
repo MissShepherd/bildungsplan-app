@@ -41,7 +41,7 @@
   position: absolute;
   inset: 0 0 auto;
   height: 4px;
-  background: linear-gradient(90deg, #4b377f, #1f6f8b, #168b6f);
+  background: linear-gradient(90deg, #4b377f, #ffe66d, #1f6f8b);
 }
 
 .hero-main {
@@ -241,7 +241,7 @@
   content: '';
   height: 3px;
   margin: -14px -14px 12px;
-  background: linear-gradient(90deg, #4b377f, #1f6f8b);
+  background: linear-gradient(90deg, #4b377f, #ffe66d, #1f6f8b);
   border-radius: 14px 14px 0 0;
   opacity: 0;
   transition: opacity 160ms ease;
