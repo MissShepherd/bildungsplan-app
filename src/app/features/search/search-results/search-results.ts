@@ -7,6 +7,7 @@ import { Modul } from '../../../models/modul.model';
 
 @Component({
   selector: 'app-search-results',
+  standalone: true,
   imports: [RouterLink],
   templateUrl: './search-results.html',
   styleUrl: './search-results.css',
