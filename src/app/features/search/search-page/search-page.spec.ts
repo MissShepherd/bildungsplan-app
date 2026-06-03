@@ -1,4 +1,7 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { SearchPage } from './search-page';
 
@@ -8,9 +11,13 @@ describe('SearchPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SearchPage]
-    })
-    .compileComponents();
+      imports: [SearchPage],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SearchPage);
     component = fixture.componentInstance;
