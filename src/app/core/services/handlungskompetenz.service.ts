@@ -11,7 +11,7 @@ import { Modul } from '../../models/modul.model';
 })
 export class HandlungskompetenzService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${API_BASE_URL}/api/handlungskompetenzen`;
+  private readonly apiUrl = `${API_BASE_URL}/handlungskompetenzen`;
 
   getAll(): Observable<Handlungskompetenz[]> {
     return this.http.get<Handlungskompetenz[]>(this.apiUrl);

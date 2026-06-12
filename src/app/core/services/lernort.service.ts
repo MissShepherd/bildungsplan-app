@@ -10,7 +10,7 @@ import { Lernort } from '../../models/lernort.model';
 })
 export class LernortService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${API_BASE_URL}/api/lernorte`;
+  private readonly apiUrl = `${API_BASE_URL}/lernorte`;
 
   getAll(): Observable<Lernort[]> {
     return this.http.get<Lernort[]>(this.apiUrl);

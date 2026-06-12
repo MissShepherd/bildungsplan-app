@@ -11,7 +11,7 @@ import { Handlungskompetenz } from '../../models/handlungskompetenz.model';
 })
 export class HandlungskompetenzbereichService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${API_BASE_URL}/api/handlungskompetenzbereiche`;
+  private readonly apiUrl = `${API_BASE_URL}/handlungskompetenzbereiche`;
 
   getAll(): Observable<Handlungskompetenzbereich[]> {
     return this.http.get<Handlungskompetenzbereich[]>(this.apiUrl);

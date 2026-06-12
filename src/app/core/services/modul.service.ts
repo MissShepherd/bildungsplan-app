@@ -23,7 +23,7 @@ export interface ModulSuchkriterien {
 })
 export class ModulService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${API_BASE_URL}/api/module`;
+  private readonly apiUrl = `${API_BASE_URL}/module`;
 
   getAll(): Observable<Modul[]> {
     return this.http.get<Modul[]>(this.apiUrl);
